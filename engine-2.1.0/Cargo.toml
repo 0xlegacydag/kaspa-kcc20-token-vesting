@@ -1,0 +1,16 @@
+[package]
+name = "replay-2-1-0"
+description = "Replays the transactions of the TokenVesting checks, byte for byte, on the script engine and the mass calculator of the rusty-kaspa 2.1.0 packages"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94.1"
+license = "ISC"
+publish = false
+
+[dependencies]
+kaspa-txscript = "=2.1.0"
+kaspa-txscript-errors = "=2.1.0"
+kaspa-consensus-core = "=2.1.0"
+kaspa-hashes = "=2.1.0"
+serde_json = "1"
+faster-hex = "0.10"

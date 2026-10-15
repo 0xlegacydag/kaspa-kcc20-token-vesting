@@ -1,0 +1,200 @@
+pragma silverscript ^0.1.0;
+
+// TokenVesting: holds tokens of one KCC-20 family (the Argent reference program) and
+// releases them to one beneficiary on a linear schedule with a cliff. From the end of the
+// schedule on, the beneficiary may take a token coin of this covenant whole, tokens beyond
+// the schedule included.
+//
+// educational / unaudited / not for real funds
+//
+// The token coin is owned by this contract's covenant id (KCC-2 owner scheme 0x04): the
+// token program accepts the spend when an input of this covenant is present, and this
+// contract decides what the token outputs must be. Time is the transaction's DAA-score
+// lock time: the node does not accept the transaction before the DAA score passes it.
+contract TokenVesting(
+    byte[32] init_beneficiary,
+    byte[32] init_token_covid,
+    byte[32] init_token_template,
+    int init_start,
+    int init_cliff,
+    int init_duration,
+    int init_total,
+    int init_released
+) {
+    // KCC-2 owner schemes and the KCC-20 borrow scheme used here.
+    byte constant OWNER_P2PK_SCHNORR = 0x00;
+    byte constant OWNER_COVENANT_ID = 0x04;
+    byte constant BORROW_DISABLED = 0x00;
+
+    // Template lengths of the pinned KCC20 program (kcc20-reference c8a0871,
+    // fixtures/public-mint/sil/KCC20.sil: gen__const_kcc20_prefix_len and _suffix_len).
+    int constant TOKEN_PREFIX_LEN = 1;
+    int constant TOKEN_SUFFIX_LEN = 3885;
+
+    // Bounds that rule out overflow: start + cliff stays far below 2^63, and so does every
+    // product of the formula in release. The lock-time domain is checked by tx.daa itself.
+    int constant MAX_DURATION = 3000000000;
+    int constant MAX_DAA = 400000000000;
+    int constant MAX_INPUTS = 8;
+
+    // The state of a KCC20 coin of the Argent reference, as it lies in the coin's script:
+    // the compiler-owned template field first, then the six KCC-20 fields.
+    struct KCC20State {
+        byte[32] kcc20_template;
+        int amount;
+        byte[32] owner;
+        byte owner_scheme;
+        byte borrow_scheme;
+        byte[32] borrow_guard;
+        byte[32] extension_commitment;
+    }
+
+    byte[32] beneficiary = init_beneficiary;
+    byte[32] token_covid = init_token_covid;
+    byte[32] token_template = init_token_template;
+    int start = init_start;
+    int cliff = init_cliff;
+    int duration = init_duration;
+    int total = init_total;
+    int released = init_released;
+
+    entry release(sig beneficiary_sig, int claim) {
+        // 1. The beneficiary signs, with the default signature type only.
+        require(byte[](beneficiary_sig).slice(64, 65) == byte[](0x01));
+        require(checkSig(beneficiary_sig, pubkey(beneficiary)));
+
+        // 2. The parameters are checked before any arithmetic: nobody checks them when the
+        //    coin is created.
+        require(start >= 0);
+        require(start <= MAX_DAA);
+        require(cliff >= 0);
+        require(cliff <= MAX_DAA);
+        require(duration > 0);
+        require(duration <= MAX_DURATION);
+        require(total > 0);
+        require(released >= 0);
+        require(released <= total);
+        require(claim > 0);
+
+        // 3. Time: the lock time is a DAA score at or after the cliff.
+        require(tx.daa >= start + cliff);
+        int now = OpTxLockTime();
+        int elapsed = now - start;
+
+        // 4. Before the end of the schedule the claim stays within what has vested so far:
+        //    total * elapsed / duration, rounded down, written so that no product can pass
+        //    2^63: (total / duration) * elapsed <= total, and
+        //    (total % duration) * elapsed < duration * duration <= 9 * 10^18. From the end on
+        //    the only limit is the token coin itself (step 6): the beneficiary may take all
+        //    it holds, tokens beyond total included.
+        if (elapsed < duration) {
+            int vested = (total / duration) * elapsed + ((total % duration) * elapsed) / duration;
+            require(claim <= vested - released);
+        }
+
+        // 5. Exactly one token coin of the family, and no other covenant coin besides this
+        //    one: any input of this covenant would let the token program move every coin
+        //    this covenant owns.
+        byte[32] own_covid = OpInputCovenantId(this.activeInputIndex);
+        require(OpCovInputCount(own_covid) == 1);
+        require(OpCovInputCount(token_covid) == 1);
+        int token_input = OpCovInputIdx(token_covid, 0);
+        require(tx.inputs.length <= MAX_INPUTS);
+        for (i, 0, tx.inputs.length, MAX_INPUTS) {
+            if (i != this.activeInputIndex) {
+                if (i != token_input) {
+                    require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));
+                }
+            }
+        }
+
+        // 6. The token coin is one this covenant owns.
+        KCC20State vault = readInputStateWithTemplate(
+            token_input,
+            TOKEN_PREFIX_LEN,
+            TOKEN_SUFFIX_LEN,
+            token_template
+        );
+        require(vault.owner == own_covid);
+        require(vault.owner_scheme == OWNER_COVENANT_ID);
+        require(vault.amount >= claim);
+        int remaining = vault.amount - claim;
+
+        // 7. The token outputs: the claim to the beneficiary's key, the rest back to this
+        //    covenant, both with borrowing disabled and the vault's extension commitment.
+        if (remaining > 0) {
+            require(OpCovOutputCount(token_covid) == 2);
+        } else {
+            require(OpCovOutputCount(token_covid) == 1);
+        }
+        validateOutputStateWithInputTemplate(
+            OpCovOutputIdx(token_covid, 0),
+            KCC20State {
+                kcc20_template: vault.kcc20_template,
+                amount: claim,
+                owner: beneficiary,
+                owner_scheme: OWNER_P2PK_SCHNORR,
+                borrow_scheme: BORROW_DISABLED,
+                borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000),
+                extension_commitment: vault.extension_commitment
+            },
+            token_input,
+            TOKEN_PREFIX_LEN,
+            TOKEN_SUFFIX_LEN,
+            token_template
+        );
+        if (remaining > 0) {
+            int change_output = OpCovOutputIdx(token_covid, 1);
+            validateOutputStateWithInputTemplate(
+                change_output,
+                KCC20State {
+                    kcc20_template: vault.kcc20_template,
+                    amount: remaining,
+                    owner: own_covid,
+                    owner_scheme: OWNER_COVENANT_ID,
+                    borrow_scheme: BORROW_DISABLED,
+                    borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000),
+                    extension_commitment: vault.extension_commitment
+                },
+                token_input,
+                TOKEN_PREFIX_LEN,
+                TOKEN_SUFFIX_LEN,
+                token_template
+            );
+            require(tx.outputs[change_output].value >= tx.inputs[token_input].value);
+        }
+
+        // 8. The released amount counts the schedule's tokens only: it stops at total, however
+        //    much the coin held beyond it (computed without adding, so a claim near 2^63
+        //    cannot overflow). This coin continues with it while the schedule has tokens left
+        //    to release (always before its end) and while a rest of the vault stays with this
+        //    covenant; once released reaches total with nothing left in the token coin, the
+        //    beneficiary chooses: continue (to take a coin of the family sent to this
+        //    covenant later) or end. It authorizes no other continuation of its covenant.
+        int new_released = total;
+        if (claim < total - released) {
+            new_released = released + claim;
+        }
+        if (remaining > 0 || new_released < total || OpCovOutputCount(own_covid) > 0) {
+            require(OpCovOutputCount(own_covid) == 1);
+            require(OpAuthOutputCount(this.activeInputIndex) == 1);
+            int next_output = OpCovOutputIdx(own_covid, 0);
+            validateOutputState(
+                next_output,
+                State {
+                    beneficiary: beneficiary,
+                    token_covid: token_covid,
+                    token_template: token_template,
+                    start: start,
+                    cliff: cliff,
+                    duration: duration,
+                    total: total,
+                    released: new_released
+                }
+            );
+            require(tx.outputs[next_output].value >= tx.inputs[this.activeInputIndex].value);
+        } else {
+            require(OpAuthOutputCount(this.activeInputIndex) == 0);
+        }
+    }
+}

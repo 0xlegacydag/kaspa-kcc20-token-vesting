@@ -1,0 +1,8 @@
+# Every text file is kept with LF line endings on every system.
+* text=auto eol=lf
+
+# The files of the last runs are kept byte for byte as they were written.
+results/** -text
+
+# The page about the runs is prose, not program output: LF like every other text file.
+results/README.md text eol=lf

@@ -1,0 +1,976 @@
+[
+  {
+    "id": "R01",
+    "line": 63,
+    "rule": "require(byte[](beneficiary_sig).slice(64, 65) == byte[](0x01));",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "7c: the beneficiary signs with type None",
+      "7e: the beneficiary signs with type All | AnyOneCanPay",
+      "7f: the beneficiary signs with type None | AnyOneCanPay",
+      "7d: the beneficiary signs with type Single",
+      "7g: the beneficiary signs with type Single | AnyOneCanPay"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "7c: the beneficiary signs with type None",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7e: the beneficiary signs with type All | AnyOneCanPay",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7f: the beneficiary signs with type None | AnyOneCanPay",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7d: the beneficiary signs with type Single",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7g: the beneficiary signs with type Single | AnyOneCanPay",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "7c: the beneficiary signs with type None",
+      "7e: the beneficiary signs with type All | AnyOneCanPay",
+      "7f: the beneficiary signs with type None | AnyOneCanPay",
+      "7d: the beneficiary signs with type Single",
+      "7g: the beneficiary signs with type Single | AnyOneCanPay"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R02",
+    "line": 64,
+    "rule": "require(checkSig(beneficiary_sig, pubkey(beneficiary)));",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "7a: no signature: 64 zero bytes and the type byte of All",
+      "7b: a stranger's valid signature of the transaction"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "12f: after the end, a stranger signs for the whole over-funded vault, to the stranger's key",
+        "now": "refused at Vesting(SourceLine { line: 130, text: \"validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20_template, amount: claim, owner: beneficiary, owner_scheme: OWNER_P2PK_SCHNORR, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );\" })"
+      },
+      {
+        "case": "7a: no signature: 64 zero bytes and the type byte of All",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7b: a stranger's valid signature of the transaction",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "7h: the beneficiary's signature of the honest release, in a release to a stranger",
+        "now": "refused at Vesting(SourceLine { line: 130, text: \"validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20_template, amount: claim, owner: beneficiary, owner_scheme: OWNER_P2PK_SCHNORR, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "12f: after the end, a stranger signs for the whole over-funded vault, to the stranger's key",
+      "7a: no signature: 64 zero bytes and the type byte of All",
+      "7b: a stranger's valid signature of the transaction",
+      "7h: the beneficiary's signature of the honest release, in a release to a stranger"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R03",
+    "line": 68,
+    "rule": "require(start >= 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9l: a coin made with start -1"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9l: a coin made with start -1",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9l: a coin made with start -1"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R04",
+    "line": 69,
+    "rule": "require(start <= MAX_DAA);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "13a (s-m1): a coin made with start 4.5e11, the honest first release"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "13a (s-m1): a coin made with start 4.5e11, the honest first release",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "9f: a coin made with start 2^63 - 11 and cliff 100: start + cliff would overflow",
+        "now": "refused at Vesting(SourceLine { line: 80, text: \"require(tx.daa >= start + cliff);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "13a (s-m1): a coin made with start 4.5e11, the honest first release",
+      "9f: a coin made with start 2^63 - 11 and cliff 100: start + cliff would overflow"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R05",
+    "line": 70,
+    "rule": "require(cliff >= 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9m: a coin made with cliff -1"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9m: a coin made with cliff -1",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9m: a coin made with cliff -1"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R06",
+    "line": 71,
+    "rule": "require(cliff <= MAX_DAA);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "13b (s-m2): a coin made with cliff 4.1e11, everything after the cliff"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "13b (s-m2): a coin made with cliff 4.1e11, everything after the cliff",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "9i: a coin made with cliff 2^63 - 6: start + cliff would overflow",
+        "now": "refused at Vesting(SourceLine { line: 80, text: \"require(tx.daa >= start + cliff);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "13b (s-m2): a coin made with cliff 4.1e11, everything after the cliff",
+      "9i: a coin made with cliff 2^63 - 6: start + cliff would overflow"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R07",
+    "line": 72,
+    "rule": "require(duration > 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9j: a coin made with duration 0"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9j: a coin made with duration 0",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9j: a coin made with duration 0"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R08",
+    "line": 73,
+    "rule": "require(duration <= MAX_DURATION);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "13c (s-m3): a coin made with duration 4e9 and total 1e12, the honest first release"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "13c (s-m3): a coin made with duration 4e9 and total 1e12, the honest first release",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "9e: a coin made with duration 4,000,000,000: the formula would overflow without the bound",
+        "now": "refused at Vesting(SourceLine { line: 91, text: \"int vested = (total / duration) * elapsed + ((total % duration) * elapsed) / duration;\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "13c (s-m3): a coin made with duration 4e9 and total 1e12, the honest first release",
+      "9e: a coin made with duration 4,000,000,000: the formula would overflow without the bound"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R09",
+    "line": 74,
+    "rule": "require(total > 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9n: a coin made with total 0, the whole vault after the end"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9k: a coin made with total 0",
+        "now": "refused at Vesting(SourceLine { line: 92, text: \"require(claim <= vested - released);\" })"
+      },
+      {
+        "case": "9n: a coin made with total 0, the whole vault after the end",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9k: a coin made with total 0",
+      "9n: a coin made with total 0, the whole vault after the end"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R10",
+    "line": 75,
+    "rule": "require(released >= 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9h: a coin made with released = -1,000"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9h: a coin made with released = -1,000",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9h: a coin made with released = -1,000"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R11",
+    "line": 76,
+    "rule": "require(released <= total);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "9g: a coin made with released > total"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9g: a coin made with released > total",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9g: a coin made with released > total"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R12",
+    "line": 77,
+    "rule": "require(claim > 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "1e: a claim of 0"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "1e: a claim of 0",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "1f: a claim of -5",
+        "now": "refused at Passed"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "1e: a claim of 0",
+      "1f: a claim of -5"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R13",
+    "line": 80,
+    "rule": "require(tx.daa >= start + cliff);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "11a: a timestamp lock time, asking for everything",
+      "11c: the vesting input's sequence is final (lock time switched off for it)",
+      "1a: one DAA unit before the cliff, 1 token",
+      "4l: the next coin runs a contract without the time rule"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "11a: a timestamp lock time, asking for everything",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "11c: the vesting input's sequence is final (lock time switched off for it)",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "1a: one DAA unit before the cliff, 1 token",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "11a: a timestamp lock time, asking for everything",
+      "11c: the vesting input's sequence is final (lock time switched off for it)",
+      "1a: one DAA unit before the cliff, 1 token",
+      "4l: the next coin runs a contract without the time rule"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R14",
+    "line": 92,
+    "rule": "require(claim <= vested - released);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "11f: the whole vault at 1,500",
+      "12b: one unit before the end, the whole over-funded vault",
+      "12a: one unit before the end, what is vested plus the 5 tokens beyond the schedule",
+      "12c: before the end, a coin of 7 tokens sent to the covenant later, whole",
+      "1c: after 100,000 released, one token more than the 200,000 due",
+      "1b: one token more than vested (150,001 at 1,500)",
+      "1d: at the cliff, after the cliff's tokens were released, 1 more token"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "11f: the whole vault at 1,500",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "12b: one unit before the end, the whole over-funded vault",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "12a: one unit before the end, what is vested plus the 5 tokens beyond the schedule",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "12c: before the end, a coin of 7 tokens sent to the covenant later, whole",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "1c: after 100,000 released, one token more than the 200,000 due",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "1b: one token more than vested (150,001 at 1,500)",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "1d: at the cliff, after the cliff's tokens were released, 1 more token",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "9d: a claim of 2^63 - 1",
+        "now": "refused at Vesting(SourceLine { line: 120, text: \"require(vault.amount >= claim);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "11f: the whole vault at 1,500",
+      "12b: one unit before the end, the whole over-funded vault",
+      "12a: one unit before the end, what is vested plus the 5 tokens beyond the schedule",
+      "12c: before the end, a coin of 7 tokens sent to the covenant later, whole",
+      "1c: after 100,000 released, one token more than the 200,000 due",
+      "1b: one token more than vested (150,001 at 1,500)",
+      "1d: at the cliff, after the cliff's tokens were released, 1 more token",
+      "9d: a claim of 2^63 - 1"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R15",
+    "line": 99,
+    "rule": "require(OpCovInputCount(own_covid) == 1);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "11d: a second coin of the vesting covenant in the same transaction",
+        "now": "refused at Vesting(SourceLine { line: 106, text: \"require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "11d: a second coin of the vesting covenant in the same transaction"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R16",
+    "line": 100,
+    "rule": "require(OpCovInputCount(token_covid) == 1);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "5a: a second coin of the token family, owned by the covenant, as a delegate",
+        "now": "refused at Vesting(SourceLine { line: 106, text: \"require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));\" })"
+      },
+      {
+        "case": "5b: the vault is a coin of another family, same KCC20 program and layout",
+        "now": "refused at Vesting(SourceLine { line: 101, text: \"int token_input = OpCovInputIdx(token_covid, 0);\" })"
+      },
+      {
+        "case": "9a: no token input at all, the vesting coin alone",
+        "now": "refused at Vesting(SourceLine { line: 101, text: \"int token_input = OpCovInputIdx(token_covid, 0);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "5a: a second coin of the token family, owned by the covenant, as a delegate",
+      "5b: the vault is a coin of another family, same KCC20 program and layout",
+      "9a: no token input at all, the vesting coin alone"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R17",
+    "line": 102,
+    "rule": "require(tx.inputs.length <= MAX_INPUTS);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "9c: nine inputs, one more than the loop's bound",
+        "now": "refused at Vesting(SourceLine { line: 103, text: \"for (i, 0, tx.inputs.length, MAX_INPUTS) { if (i != this.activeInputIndex) { if (i != token_input) { require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000)); } } }\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "9c: nine inputs, one more than the loop's bound"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R18",
+    "line": 106,
+    "rule": "require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "6a: a token of another family, owned by the covenant, leaves to a stranger in the same transaction"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "6a: a token of another family, owned by the covenant, leaves to a stranger in the same transaction",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "6a: a token of another family, owned by the covenant, leaves to a stranger in the same transaction"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R19",
+    "line": 118,
+    "rule": "require(vault.owner == own_covid);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "13d (s-m4): the vault is a token coin owned by the token's own covenant id"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "13d (s-m4): the vault is a token coin owned by the token's own covenant id",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "5d: the token coin spent is the beneficiary's own (owner scheme 0x00)",
+        "now": "refused at Vesting(SourceLine { line: 119, text: \"require(vault.owner_scheme == OWNER_COVENANT_ID);\" })"
+      },
+      {
+        "case": "5g: the token coin spent is owned by another covenant id (scheme 0x04)",
+        "now": "refused at Passed"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "13d (s-m4): the vault is a token coin owned by the token's own covenant id",
+      "5d: the token coin spent is the beneficiary's own (owner scheme 0x00)",
+      "5g: the token coin spent is owned by another covenant id (scheme 0x04)"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R20",
+    "line": 119,
+    "rule": "require(vault.owner_scheme == OWNER_COVENANT_ID);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "5e: the token coin spent has owner scheme 0x03 with the covenant id's bytes",
+        "now": "refused at Passed"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "5e: the token coin spent has owner scheme 0x03 with the covenant id's bytes"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R21",
+    "line": 120,
+    "rule": "require(vault.amount >= claim);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "11e: the token coin spent holds 10 tokens, the claim is 150,000",
+        "now": "refused at Passed"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "11e: the token coin spent holds 10 tokens, the claim is 150,000"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R22",
+    "line": 126,
+    "rule": "require(OpCovOutputCount(token_covid) == 2);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "13e (s-m5): claim, rest and an extra empty token coin for a stranger"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "13e (s-m5): claim, rest and an extra empty token coin for a stranger",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "3f: the rest is split into two coins of the covenant",
+        "now": "refused at Vesting(SourceLine { line: 148, text: \"validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: remaining, owner: own_covid, owner_scheme: OWNER_COVENANT_ID, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );\" })"
+      },
+      {
+        "case": "9b: tokens remain but only the claim's output exists",
+        "now": "refused at Vesting(SourceLine { line: 147, text: \"int change_output = OpCovOutputIdx(token_covid, 1);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "13e (s-m5): claim, rest and an extra empty token coin for a stranger",
+      "3f: the rest is split into two coins of the covenant",
+      "9b: tokens remain but only the claim's output exists"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R23",
+    "line": 128,
+    "rule": "require(OpCovOutputCount(token_covid) == 1);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "3g: the last release adds a token coin of 0 tokens for a stranger"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "3g: the last release adds a token coin of 0 tokens for a stranger",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "3g: the last release adds a token coin of 0 tokens for a stranger"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R24",
+    "line": 130,
+    "rule": "validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20_template, amount: claim, owner: beneficiary, owner_scheme: OWNER_P2PK_SCHNORR, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "12d: after the end, the whole over-funded vault to a stranger's key",
+      "2a: the claim goes to a stranger's key",
+      "2b: the claim's owner scheme is 0x01 (key hash) with the key's bytes",
+      "2c: the claim's owner scheme is 0x04 with the key's bytes",
+      "2d: the claim's owner scheme is 0x03 with the key's bytes",
+      "8a: the claim's coin is open to borrowing by anyone (scheme 0x01, threshold 0)"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "10a: claim 150,000 in the call, 150,001 in the beneficiary's output",
+        "now": "refused at Vesting(SourceLine { line: 148, text: \"validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: remaining, owner: own_covid, owner_scheme: OWNER_COVENANT_ID, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );\" })"
+      },
+      {
+        "case": "10b: claim 150,000 in the call, 149,999 in the beneficiary's output",
+        "now": "refused at Vesting(SourceLine { line: 148, text: \"validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: remaining, owner: own_covid, owner_scheme: OWNER_COVENANT_ID, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );\" })"
+      },
+      {
+        "case": "12d: after the end, the whole over-funded vault to a stranger's key",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "2a: the claim goes to a stranger's key",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "2b: the claim's owner scheme is 0x01 (key hash) with the key's bytes",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "2c: the claim's owner scheme is 0x04 with the key's bytes",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "2d: the claim's owner scheme is 0x03 with the key's bytes",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "2e: the claim carries another extension commitment",
+        "now": "refused at Passed"
+      },
+      {
+        "case": "8a: the claim's coin is open to borrowing by anyone (scheme 0x01, threshold 0)",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "10a: claim 150,000 in the call, 150,001 in the beneficiary's output",
+      "10b: claim 150,000 in the call, 149,999 in the beneficiary's output",
+      "12d: after the end, the whole over-funded vault to a stranger's key",
+      "2a: the claim goes to a stranger's key",
+      "2b: the claim's owner scheme is 0x01 (key hash) with the key's bytes",
+      "2c: the claim's owner scheme is 0x04 with the key's bytes",
+      "2d: the claim's owner scheme is 0x03 with the key's bytes",
+      "2e: the claim carries another extension commitment",
+      "8a: the claim's coin is open to borrowing by anyone (scheme 0x01, threshold 0)"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R25",
+    "line": 148,
+    "rule": "validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: remaining, owner: own_covid, owner_scheme: OWNER_COVENANT_ID, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "12e: after the end, total to the beneficiary and the 5 extra tokens to a stranger's key",
+      "3a: the rest goes to another covenant id",
+      "3b: the rest has owner scheme 0x03 with the covenant id's bytes",
+      "3c: the rest goes to the beneficiary's key",
+      "8b: the rest's coin is open to borrowing by anyone (scheme 0x01, threshold 0)",
+      "8c: the rest's coin names a stranger's borrow key (scheme 0x02)"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "12e: after the end, total to the beneficiary and the 5 extra tokens to a stranger's key",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "3a: the rest goes to another covenant id",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "3b: the rest has owner scheme 0x03 with the covenant id's bytes",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "3c: the rest goes to the beneficiary's key",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "3d: the rest is one token short (the token's sum breaks too)",
+        "now": "refused at Passed"
+      },
+      {
+        "case": "8b: the rest's coin is open to borrowing by anyone (scheme 0x01, threshold 0)",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "8c: the rest's coin names a stranger's borrow key (scheme 0x02)",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "12e: after the end, total to the beneficiary and the 5 extra tokens to a stranger's key",
+      "3a: the rest goes to another covenant id",
+      "3b: the rest has owner scheme 0x03 with the covenant id's bytes",
+      "3c: the rest goes to the beneficiary's key",
+      "3d: the rest is one token short (the token's sum breaks too)",
+      "8b: the rest's coin is open to borrowing by anyone (scheme 0x01, threshold 0)",
+      "8c: the rest's coin names a stranger's borrow key (scheme 0x02)"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R26",
+    "line": 164,
+    "rule": "require(tx.outputs[change_output].value >= tx.inputs[token_input].value);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "3e: the rest's coin holds one sompi less KAS than the vault"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "3e: the rest's coin holds one sompi less KAS than the vault",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "3e: the rest's coin holds one sompi less KAS than the vault"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R27",
+    "line": 179,
+    "rule": "require(OpCovOutputCount(own_covid) == 1);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [
+      {
+        "case": "12g: after the end, the vesting coin kept twice",
+        "now": "refused at Vesting(SourceLine { line: 180, text: \"require(OpAuthOutputCount(this.activeInputIndex) == 1);\" })"
+      },
+      {
+        "case": "12k: after the end, a coin of 7 sent later taken whole, the vesting coin ended with released 150,007",
+        "now": "refused at Vesting(SourceLine { line: 180, text: \"require(OpAuthOutputCount(this.activeInputIndex) == 1);\" })"
+      },
+      {
+        "case": "4k: the vesting coin ends while tokens remain",
+        "now": "refused at Vesting(SourceLine { line: 180, text: \"require(OpAuthOutputCount(this.activeInputIndex) == 1);\" })"
+      },
+      {
+        "case": "4n: at the end, the schedule's tokens taken from an over-funded vault, the vesting coin ended while 5 tokens stay with the covenant",
+        "now": "refused at Vesting(SourceLine { line: 180, text: \"require(OpAuthOutputCount(this.activeInputIndex) == 1);\" })"
+      },
+      {
+        "case": "4m: two next vesting coins",
+        "now": "refused at Vesting(SourceLine { line: 180, text: \"require(OpAuthOutputCount(this.activeInputIndex) == 1);\" })"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "12g: after the end, the vesting coin kept twice",
+      "12k: after the end, a coin of 7 sent later taken whole, the vesting coin ended with released 150,007",
+      "4k: the vesting coin ends while tokens remain",
+      "4n: at the end, the schedule's tokens taken from an over-funded vault, the vesting coin ended while 5 tokens stay with the covenant",
+      "4m: two next vesting coins"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R28",
+    "line": 180,
+    "rule": "require(OpAuthOutputCount(this.activeInputIndex) == 1);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [],
+    "verdict": "SURVIVED"
+  },
+  {
+    "id": "R29",
+    "line": 182,
+    "rule": "validateOutputState( next_output, State { beneficiary: beneficiary, token_covid: token_covid, token_template: token_template, start: start, cliff: cliff, duration: duration, total: total, released: new_released } );",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "12h: after the end, the kept vesting coin has released = 0 again",
+      "12i: the whole over-funded vault at the end, the vesting coin kept with released = total + 5",
+      "4a: next state, another beneficiary",
+      "4b: next state, another token family",
+      "4c: next state, another token template",
+      "4d: next state, start one unit earlier",
+      "4e: next state, cliff one unit shorter",
+      "4f: next state, duration one unit shorter",
+      "4g: next state, total one token larger",
+      "4h: next state, released one token short",
+      "4i: next state, released left as it was",
+      "4l: the next coin runs a contract without the time rule"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "12h: after the end, the kept vesting coin has released = 0 again",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "12i: the whole over-funded vault at the end, the vesting coin kept with released = total + 5",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4a: next state, another beneficiary",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4b: next state, another token family",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4c: next state, another token template",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4d: next state, start one unit earlier",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4e: next state, cliff one unit shorter",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4f: next state, duration one unit shorter",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4g: next state, total one token larger",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4h: next state, released one token short",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4i: next state, released left as it was",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4l: the next coin runs a contract without the time rule",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "12h: after the end, the kept vesting coin has released = 0 again",
+      "12i: the whole over-funded vault at the end, the vesting coin kept with released = total + 5",
+      "4a: next state, another beneficiary",
+      "4b: next state, another token family",
+      "4c: next state, another token template",
+      "4d: next state, start one unit earlier",
+      "4e: next state, cliff one unit shorter",
+      "4f: next state, duration one unit shorter",
+      "4g: next state, total one token larger",
+      "4h: next state, released one token short",
+      "4i: next state, released left as it was",
+      "4l: the next coin runs a contract without the time rule"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R30",
+    "line": 195,
+    "rule": "require(tx.outputs[next_output].value >= tx.inputs[this.activeInputIndex].value);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [
+      "12j: after the end, the kept vesting coin with less KAS",
+      "4j: the next vesting coin holds one sompi less KAS"
+    ],
+    "cases_written_for_this_rule": [
+      {
+        "case": "12j: after the end, the kept vesting coin with less KAS",
+        "now": "ACCEPTED"
+      },
+      {
+        "case": "4j: the next vesting coin holds one sompi less KAS",
+        "now": "ACCEPTED"
+      }
+    ],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [
+      "12j: after the end, the kept vesting coin with less KAS",
+      "4j: the next vesting coin holds one sompi less KAS"
+    ],
+    "verdict": "caught"
+  },
+  {
+    "id": "R31",
+    "line": 197,
+    "rule": "require(OpAuthOutputCount(this.activeInputIndex) == 0);",
+    "status": "ran",
+    "forbidden_cases": 92,
+    "now_accepted": [],
+    "cases_written_for_this_rule": [],
+    "honest_cases": 16,
+    "honest_refused": [],
+    "failing_checks": [],
+    "verdict": "SURVIVED"
+  }
+]

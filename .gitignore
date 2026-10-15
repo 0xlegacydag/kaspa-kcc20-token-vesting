@@ -1,0 +1,5 @@
+/target/
+/engine-2.1.0/target/
+
+# a local clone of the KCC20 reference, read by the checks (see README.md)
+/kcc20-reference/

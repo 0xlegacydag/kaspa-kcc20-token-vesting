@@ -1,0 +1,75 @@
+This repository is an independent study. It is not affiliated with or endorsed by the
+authors of the KCC-20 specification, the authors of the KCC20 reference, or the Kaspa
+developers.
+
+It holds no file of the KCC20 reference and no file copied from its repository. Of the
+source text of the reference's contracts it quotes only what 1 lists: names, short
+fragments by which the checks name a place, and in the records of the runs the statements
+at which the token program stopped. What in it comes from the work of others:
+
+1. What follows the KCC20 reference without being copied from it.
+
+   The contract contracts/TokenVesting.sil reads and writes coins of the KCC20 program of
+   the reference, https://github.com/argent-lang/kcc20-reference, revision c8a0871. For
+   that it uses, by their names and values: the layout of the state of a KCC20 coin (the
+   struct KCC20State: the template field the compiler adds, then amount, owner,
+   owner_scheme, borrow_scheme, borrow_guard and extension_commitment, with their types and
+   in that order); the prefix and suffix lengths of the KCC20 template, 1 and 3885 bytes,
+   which the reference's generated KCC20.sil names gen__const_kcc20_prefix_len and
+   gen__const_kcc20_suffix_len; and the owner and borrow schemes it uses (0x00 a Schnorr
+   key, 0x04 a covenant id, 0x00 borrowing disabled), which are those of the KCC
+   specifications, https://github.com/kaspanet/kccs (CC0). The code is written anew.
+
+   The checks read the reference from a clone the reader makes: its compiled artifact
+   through kcc20-family (see 2), and in tests/review_layout.rs its generated KCC20.sil.
+   None of its files is included. Where a check expects the token program to refuse, it
+   names the place by a few words of the reference's generated source, as the source map
+   of kcc20-family prints them, or by that map's rule number K-50. There are five such
+   fragments: three parts of conditions, the longest "OpCovInputCount(gen__glob_owner) > 0",
+   the start of the statement "validateOutputState(", and the statement "require(false);",
+   which several lines of KCC20.sil consist of. The records of the runs in results/*.jsonl
+   name every stop in the token program as that source map describes it: the line and the
+   statement of the generated KCC20.sil, nine statements of one to four lines in all, for
+   example "line 175: require(output_total == input_total); | rule K-37". The comments name
+   files and lines of the reference.
+
+   The reference is the work of the contributors of that repository, named in its commit
+   history. It is written in Argent (https://github.com/argent-lang/argent) and compiled
+   through SilverScript (https://github.com/kaspanet/silverscript), and states its license
+   in its Cargo.toml (`license = "ISC"`, revision c8a0871).
+
+2. What comes from kaspa-kcc20-reference-study,
+   https://github.com/0xlegacydag/kaspa-kcc20-reference-study, the earlier repository of
+   the same copyright holder (ISC License).
+
+   Its crates node-gate (what a Kaspa node says about a transaction without running a
+   node: the node's own script engine and mass calculator as dependencies, and the rules
+   around them ported from rusty-kaspa; that repository's NOTICE names the ported files)
+   and kcc20-family (the reference as data, and the assembler of its calls and coins) are
+   dependencies at revision 4d111ff, fetched by cargo and not included here.
+   tools/mutation-run.mjs takes the idea of that repository's engine/tools/mutation-run.mjs
+   (take one rule away, run the checks again) and is written anew for the source of a
+   SilverScript contract. .github/workflows/checks.yml follows the form of that
+   repository's workflow and pins the same action at the same commit.
+
+3. rusty-kaspa, https://github.com/kaspanet/rusty-kaspa.
+
+   Nothing in this repository is ported from it: where the code relies on one of its rules,
+   it calls the package (check_vesting_genesis in src/launch.rs follows the grouping rule of
+   genesis outputs and calls its covenant_id). Its packages are dependencies, fetched by
+   cargo and not included here: 12 packages at revision
+   a41a333b08848f41bf737b72592e463a6011b8ac in Cargo.lock, and 11 packages of release 2.1.0
+   from crates.io in engine-2.1.0/Cargo.lock (ISC License, Copyright (c) 2022-2024 Kaspa
+   developers). Comments name its files and lines where the code relies on one of its
+   rules.
+
+4. Other Rust dependencies, fetched by cargo and not included here: 2 packages of
+   SilverScript, https://github.com/kaspanet/silverscript, at revision 3ed9733 (ISC
+   License, Copyright 2026 Kaspa Developers); 4 packages of Argent,
+   https://github.com/argent-lang/argent, at revision 9a9f4b1 (ISC License, Copyright 2026
+   Argent-lang developers), which kcc20-family uses; and packages from crates.io under
+   their own licenses. Every version is pinned by Cargo.lock and engine-2.1.0/Cargo.lock.
+
+Everything else was written for this study and is under the license in the file LICENSE:
+the contract, the crate token-vesting and its checks, the replay crate in engine-2.1.0/, the
+tools and the records of the runs in results/ (apart from what 1 says of them).

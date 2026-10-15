@@ -1,0 +1,34 @@
+     Running unittests src/lib.rs (target/debug/deps/token_vesting-b3d7d5ef12fbde47)
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+     Running tests/compile.rs (target/debug/deps/compile-ca9786b3b0ed18df)
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.49s
+     Running tests/forbidden.rs (target/debug/deps/forbidden-d56382e4cfdefa27)
+test result: ok. 92 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 46.09s
+     Running tests/genesis.rs (target/debug/deps/genesis-cf8131f6ac74b842)
+test g2_the_key_coin_with_the_vesting_id_moves_the_whole_vault_at_once ... FAILED
+test g3_two_vesting_coins_release_the_schedule_twice ... FAILED
+HOLE: a second coin with the vesting id moved the whole vault; the vesting script never ran
+HOLE: a second vesting coin of the same id released the schedule again
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.62s
+     Running tests/honest.rs (target/debug/deps/honest-db93b5d999b3d96c)
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.13s
+     Running tests/layout.rs (target/debug/deps/layout-a9cf4f117b52564c)
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.26s
+     Running tests/liveness.rs (target/debug/deps/liveness-b0902f3e09a591b3)
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.56s
+     Running tests/review_beyond_combo.rs (target/debug/deps/review_beyond_combo-eceb0c868513b06b)
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.30s
+     Running tests/review_beyond_continuation.rs (target/debug/deps/review_beyond_continuation-3a45ef13322290d8)
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.72s
+     Running tests/review_beyond_time.rs (target/debug/deps/review_beyond_time-2379729ec584ba5e)
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.74s
+     Running tests/review_launch.rs (target/debug/deps/review_launch-17b40731a613abea)
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.43s
+     Running tests/review_layout.rs (target/debug/deps/review_layout-8131c2c0158a154d)
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.56s
+     Running tests/review_mutants.rs (target/debug/deps/review_mutants-71716269c7a47191)
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.15s
+     Running tests/review_third_parties.rs (target/debug/deps/review_third_parties-abaab4fdb4c173fe)
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.04s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+run-checks: 165 checks in 13 test files; 163 passed; g2 and g3 failed with their own message, as they must (the launch hole).

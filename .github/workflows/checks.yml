@@ -1,0 +1,112 @@
+# Runs the checks of this repository on machines hosted by GitHub.
+# What each command is and what it shows: README.md, "Check it yourself".
+#
+# On Linux, macOS and Windows: rustfmt, clippy and every check of the suite. Two checks,
+# g2 and g3 of tests/genesis.rs, fail on purpose: they are forbidden moves that nothing on
+# chain refuses (README.md, "What a launch must check"). tools/run-checks.mjs runs
+# `cargo test` itself and passes only when every test file ran, every other check passed,
+# and those two failed with their own message; any other result, a build error included,
+# fails the step. Nothing in this file lets a failed command pass.
+#
+# On Linux only: the replay of every judged transaction on the rusty-kaspa 2.1.0 packages
+# (engine-2.1.0/), from the transactions the checks write in the same job. On Windows the
+# replay crate does not build as published: the kaspa-hashes 2.1.0 package on crates.io
+# lacks keccakf1600_x86-64-msvc.asm. It is not run on macOS, to keep the run short.
+#
+# Not run here: the mutation run of tools/mutation-run.mjs, which builds and runs the honest
+# and forbidden cases 31 times (the time of its last run: results/mutation-run.txt).
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  checks:
+    name: checks (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-26, windows-2025]
+    env:
+      # The build leaves out debug information and incremental data, to take less room on
+      # the disk of a hosted machine. No command and no check depends on either.
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Clone the reference at the revision the checks were written against
+        run: |
+          git clone -c core.autocrlf=false https://github.com/argent-lang/kcc20-reference
+          git -C kcc20-reference checkout c8a087117735a1f87c5c6d115fcddeaf2562c784
+
+      - name: The Rust toolchain that rust-toolchain.toml names
+        run: |
+          rustup --version
+          rustup toolchain install --no-self-update
+          rustc --version --verbose
+          cargo --version
+          cargo clippy --version
+          cargo fmt --version
+          node --version
+          df -h .
+
+      - name: cargo fetch --locked
+        run: cargo fetch --locked
+
+      - name: cargo fmt --check
+        run: cargo fmt --check
+
+      - name: cargo clippy
+        run: cargo clippy --frozen --all-targets -- -D warnings
+
+      - name: Every check (g2 and g3 must fail, every other check must pass)
+        run: |
+          KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
+          export KCC20_REFERENCE_DIR
+          export VESTING_DUMP_DIR=target/vesting-dump
+          node tools/run-checks.mjs
+
+      - name: "The replay on 2.1.0: cargo fetch --locked"
+        if: runner.os == 'Linux'
+        working-directory: engine-2.1.0
+        run: cargo fetch --locked
+
+      - name: "The replay on 2.1.0: cargo fmt --check"
+        if: runner.os == 'Linux'
+        working-directory: engine-2.1.0
+        run: cargo fmt --check
+
+      - name: "The replay on 2.1.0: cargo clippy"
+        if: runner.os == 'Linux'
+        working-directory: engine-2.1.0
+        run: cargo clippy --frozen --all-targets -- -D warnings
+
+      - name: "The replay on 2.1.0: every judged transaction"
+        if: runner.os == 'Linux'
+        working-directory: engine-2.1.0
+        run: |
+          cargo run --frozen --release -- ../target/vesting-dump/cases.jsonl | tee replay.log
+          grep -F "209 transactions: 209 judged the same on 2.1.0, 0 differently" replay.log
+          rm replay.log
+
+      - name: Room taken by the build
+        if: always()
+        run: |
+          if [ -d target ]; then du -sh target; fi
+          if [ -d engine-2.1.0/target ]; then du -sh engine-2.1.0/target; fi
+          df -h .

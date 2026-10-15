@@ -1,0 +1,133 @@
+R01 line 63: caught, 5 checks fail; 5 forbidden moves now accepted; honest refused 0; ran | require(byte[](beneficiary_sig).slice(64, 65) == byte[](0x01));
+    accepted: 7c: the beneficiary signs with type None
+    accepted: 7e: the beneficiary signs with type All | AnyOneCanPay
+    accepted: 7f: the beneficiary signs with type None | AnyOneCanPay
+    accepted: 7d: the beneficiary signs with type Single
+    accepted: 7g: the beneficiary signs with type Single | AnyOneCanPay
+R02 line 64: caught, 4 checks fail; 2 forbidden moves now accepted; honest refused 0; ran | require(checkSig(beneficiary_sig, pubkey(beneficiary)));
+    accepted: 7a: no signature: 64 zero bytes and the type byte of All
+    accepted: 7b: a stranger's valid signature of the transaction
+    written for it, now refused at Vesting(SourceLine { line: 130, text: "validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20: 12f: after the end, a stranger signs for the whole over-funded vault, to the stranger's key
+    written for it, now refused at Vesting(SourceLine { line: 130, text: "validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20: 7h: the beneficiary's signature of the honest release, in a release to a stranger
+R03 line 68: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(start >= 0);
+    accepted: 9l: a coin made with start -1
+R04 line 69: caught, 2 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(start <= MAX_DAA);
+    accepted: 13a (s-m1): a coin made with start 4.5e11, the honest first release
+    written for it, now refused at Vesting(SourceLine { line: 80, text: "require(tx.daa >= start + cliff);" }): 9f: a coin made with start 2^63 - 11 and cliff 100: start + cliff would overflow
+R05 line 70: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(cliff >= 0);
+    accepted: 9m: a coin made with cliff -1
+R06 line 71: caught, 2 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(cliff <= MAX_DAA);
+    accepted: 13b (s-m2): a coin made with cliff 4.1e11, everything after the cliff
+    written for it, now refused at Vesting(SourceLine { line: 80, text: "require(tx.daa >= start + cliff);" }): 9i: a coin made with cliff 2^63 - 6: start + cliff would overflow
+R07 line 72: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(duration > 0);
+    accepted: 9j: a coin made with duration 0
+R08 line 73: caught, 2 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(duration <= MAX_DURATION);
+    accepted: 13c (s-m3): a coin made with duration 4e9 and total 1e12, the honest first release
+    written for it, now refused at Vesting(SourceLine { line: 91, text: "int vested = (total / duration) * elapsed + ((total % duration) * elapsed) / duration;" }): 9e: a coin made with duration 4,000,000,000: the formula would overflow without the bound
+R09 line 74: caught, 2 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(total > 0);
+    accepted: 9n: a coin made with total 0, the whole vault after the end
+    written for it, now refused at Vesting(SourceLine { line: 92, text: "require(claim <= vested - released);" }): 9k: a coin made with total 0
+R10 line 75: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(released >= 0);
+    accepted: 9h: a coin made with released = -1,000
+R11 line 76: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(released <= total);
+    accepted: 9g: a coin made with released > total
+R12 line 77: caught, 2 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(claim > 0);
+    accepted: 1e: a claim of 0
+    written for it, now refused at Passed: 1f: a claim of -5
+R13 line 80: caught, 4 checks fail; 4 forbidden moves now accepted; honest refused 0; ran | require(tx.daa >= start + cliff);
+    accepted: 11a: a timestamp lock time, asking for everything
+    accepted: 11c: the vesting input's sequence is final (lock time switched off for it)
+    accepted: 1a: one DAA unit before the cliff, 1 token
+    accepted: 4l: the next coin runs a contract without the time rule
+R14 line 92: caught, 8 checks fail; 7 forbidden moves now accepted; honest refused 0; ran | require(claim <= vested - released);
+    accepted: 11f: the whole vault at 1,500
+    accepted: 12b: one unit before the end, the whole over-funded vault
+    accepted: 12a: one unit before the end, what is vested plus the 5 tokens beyond the schedule
+    accepted: 12c: before the end, a coin of 7 tokens sent to the covenant later, whole
+    accepted: 1c: after 100,000 released, one token more than the 200,000 due
+    accepted: 1b: one token more than vested (150,001 at 1,500)
+    accepted: 1d: at the cliff, after the cliff's tokens were released, 1 more token
+    written for it, now refused at Vesting(SourceLine { line: 120, text: "require(vault.amount >= claim);" }): 9d: a claim of 2^63 - 1
+R15 line 99: caught, 1 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(OpCovInputCount(own_covid) == 1);
+    written for it, now refused at Vesting(SourceLine { line: 106, text: "require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));: 11d: a second coin of the vesting covenant in the same transaction
+R16 line 100: caught, 3 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(OpCovInputCount(token_covid) == 1);
+    written for it, now refused at Vesting(SourceLine { line: 106, text: "require(OpInputCovenantId(i) == byte[32](0x0000000000000000000000000000000000000000000000000000000000000000));: 5a: a second coin of the token family, owned by the covenant, as a delegate
+    written for it, now refused at Vesting(SourceLine { line: 101, text: "int token_input = OpCovInputIdx(token_covid, 0);" }): 5b: the vault is a coin of another family, same KCC20 program and layout
+    written for it, now refused at Vesting(SourceLine { line: 101, text: "int token_input = OpCovInputIdx(token_covid, 0);" }): 9a: no token input at all, the vesting coin alone
+R17 line 102: caught, 1 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(tx.inputs.length <= MAX_INPUTS);
+    written for it, now refused at Vesting(SourceLine { line: 103, text: "for (i, 0, tx.inputs.length, MAX_INPUTS) { if (i != this.activeInputIndex) { if (i != token_input) { require(O: 9c: nine inputs, one more than the loop's bound
+R18 line 106: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(OpInputCovenantId(i) == byte[32](0x00000000000000000000000000000000000000000000000
+    accepted: 6a: a token of another family, owned by the covenant, leaves to a stranger in the same transaction
+R19 line 118: caught, 3 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(vault.owner == own_covid);
+    accepted: 13d (s-m4): the vault is a token coin owned by the token's own covenant id
+    written for it, now refused at Vesting(SourceLine { line: 119, text: "require(vault.owner_scheme == OWNER_COVENANT_ID);" }): 5d: the token coin spent is the beneficiary's own (owner scheme 0x00)
+    written for it, now refused at Passed: 5g: the token coin spent is owned by another covenant id (scheme 0x04)
+R20 line 119: caught, 1 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(vault.owner_scheme == OWNER_COVENANT_ID);
+    written for it, now refused at Passed: 5e: the token coin spent has owner scheme 0x03 with the covenant id's bytes
+R21 line 120: caught, 1 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(vault.amount >= claim);
+    written for it, now refused at Passed: 11e: the token coin spent holds 10 tokens, the claim is 150,000
+R22 line 126: caught, 3 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(OpCovOutputCount(token_covid) == 2);
+    accepted: 13e (s-m5): claim, rest and an extra empty token coin for a stranger
+    written for it, now refused at Vesting(SourceLine { line: 148, text: "validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: 3f: the rest is split into two coins of the covenant
+    written for it, now refused at Vesting(SourceLine { line: 147, text: "int change_output = OpCovOutputIdx(token_covid, 1);" }): 9b: tokens remain but only the claim's output exists
+R23 line 128: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(OpCovOutputCount(token_covid) == 1);
+    accepted: 3g: the last release adds a token coin of 0 tokens for a stranger
+R24 line 130: caught, 9 checks fail; 6 forbidden moves now accepted; honest refused 0; ran | validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_t
+    accepted: 12d: after the end, the whole over-funded vault to a stranger's key
+    accepted: 2a: the claim goes to a stranger's key
+    accepted: 2b: the claim's owner scheme is 0x01 (key hash) with the key's bytes
+    accepted: 2c: the claim's owner scheme is 0x04 with the key's bytes
+    accepted: 2d: the claim's owner scheme is 0x03 with the key's bytes
+    accepted: 8a: the claim's coin is open to borrowing by anyone (scheme 0x01, threshold 0)
+    written for it, now refused at Vesting(SourceLine { line: 148, text: "validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: 10a: claim 150,000 in the call, 150,001 in the beneficiary's output
+    written for it, now refused at Vesting(SourceLine { line: 148, text: "validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kcc20_template, amount: 10b: claim 150,000 in the call, 149,999 in the beneficiary's output
+    written for it, now refused at Passed: 2e: the claim carries another extension commitment
+R25 line 148: caught, 7 checks fail; 6 forbidden moves now accepted; honest refused 0; ran | validateOutputStateWithInputTemplate( change_output, KCC20State { kcc20_template: vault.kc
+    accepted: 12e: after the end, total to the beneficiary and the 5 extra tokens to a stranger's key
+    accepted: 3a: the rest goes to another covenant id
+    accepted: 3b: the rest has owner scheme 0x03 with the covenant id's bytes
+    accepted: 3c: the rest goes to the beneficiary's key
+    accepted: 8b: the rest's coin is open to borrowing by anyone (scheme 0x01, threshold 0)
+    accepted: 8c: the rest's coin names a stranger's borrow key (scheme 0x02)
+    written for it, now refused at Passed: 3d: the rest is one token short (the token's sum breaks too)
+R26 line 164: caught, 1 checks fail; 1 forbidden moves now accepted; honest refused 0; ran | require(tx.outputs[change_output].value >= tx.inputs[token_input].value);
+    accepted: 3e: the rest's coin holds one sompi less KAS than the vault
+R27 line 179: caught, 5 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(OpCovOutputCount(own_covid) == 1);
+    written for it, now refused at Vesting(SourceLine { line: 180, text: "require(OpAuthOutputCount(this.activeInputIndex) == 1);" }): 12g: after the end, the vesting coin kept twice
+    written for it, now refused at Vesting(SourceLine { line: 180, text: "require(OpAuthOutputCount(this.activeInputIndex) == 1);" }): 12k: after the end, a coin of 7 sent later taken whole, the vesting coin ended with released 150,007
+    written for it, now refused at Vesting(SourceLine { line: 180, text: "require(OpAuthOutputCount(this.activeInputIndex) == 1);" }): 4k: the vesting coin ends while tokens remain
+    written for it, now refused at Vesting(SourceLine { line: 180, text: "require(OpAuthOutputCount(this.activeInputIndex) == 1);" }): 4n: at the end, the schedule's tokens taken from an over-funded vault, the vesting coin ended while 5 tokens stay with the covenant
+    written for it, now refused at Vesting(SourceLine { line: 180, text: "require(OpAuthOutputCount(this.activeInputIndex) == 1);" }): 4m: two next vesting coins
+R28 line 180: SURVIVED, 0 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(OpAuthOutputCount(this.activeInputIndex) == 1);
+R29 line 182: caught, 12 checks fail; 12 forbidden moves now accepted; honest refused 0; ran | validateOutputState( next_output, State { beneficiary: beneficiary, token_covid: token_cov
+    accepted: 12h: after the end, the kept vesting coin has released = 0 again
+    accepted: 12i: the whole over-funded vault at the end, the vesting coin kept with released = total + 5
+    accepted: 4a: next state, another beneficiary
+    accepted: 4b: next state, another token family
+    accepted: 4c: next state, another token template
+    accepted: 4d: next state, start one unit earlier
+    accepted: 4e: next state, cliff one unit shorter
+    accepted: 4f: next state, duration one unit shorter
+    accepted: 4g: next state, total one token larger
+    accepted: 4h: next state, released one token short
+    accepted: 4i: next state, released left as it was
+    accepted: 4l: the next coin runs a contract without the time rule
+R30 line 195: caught, 2 checks fail; 2 forbidden moves now accepted; honest refused 0; ran | require(tx.outputs[next_output].value >= tx.inputs[this.activeInputIndex].value);
+    accepted: 12j: after the end, the kept vesting coin with less KAS
+    accepted: 4j: the next vesting coin holds one sompi less KAS
+R31 line 197: SURVIVED, 0 checks fail; 0 forbidden moves now accepted; honest refused 0; ran | require(OpAuthOutputCount(this.activeInputIndex) == 0);
+
+31 rules weakened; the checks caught 29; 2 survived:
+  R28 line 180: require(OpAuthOutputCount(this.activeInputIndex) == 1);
+  R31 line 197: require(OpAuthOutputCount(this.activeInputIndex) == 0);
+23 let at least one forbidden move through; 8 let none:
+  R15 line 99: require(OpCovInputCount(own_covid) == 1);
+  R16 line 100: require(OpCovInputCount(token_covid) == 1);
+  R17 line 102: require(tx.inputs.length <= MAX_INPUTS);
+  R20 line 119: require(vault.owner_scheme == OWNER_COVENANT_ID);
+  R21 line 120: require(vault.amount >= claim);
+  R27 line 179: require(OpCovOutputCount(own_covid) == 1);
+  R28 line 180: require(OpAuthOutputCount(this.activeInputIndex) == 1);
+  R31 line 197: require(OpAuthOutputCount(this.activeInputIndex) == 0);
+0 runs failed, counted neither as caught nor as survived.
+started 20:51:43 UTC, ended 21:20:25 UTC: 29 minutes

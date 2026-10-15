@@ -1,0 +1,211 @@
+same      | 10b: claim 150,000 in the call, 149,999 in the beneficiary's output
+same      | 11a: a timestamp lock time, asking for everything
+same      | 10c: the token's call declares other states than the outputs carry
+same      | 10a: claim 150,000 in the call, 150,001 in the beneficiary's output
+same      | 11b: lock time at the end of the schedule, judged 500 units after the cliff
+same      | 11c: the vesting input's sequence is final (lock time switched off for it)
+same      | 11d: a second coin of the vesting covenant in the same transaction
+same      | 11f: the whole vault at 1,500
+same      | 11e: the token coin spent holds 10 tokens, the claim is 150,000
+same      | 12b: one unit before the end, the whole over-funded vault
+same      | 12a: one unit before the end, what is vested plus the 5 tokens beyond the schedule
+same      | 12d: after the end, the whole over-funded vault to a stranger's key
+same      | 12c: before the end, a coin of 7 tokens sent to the covenant later, whole
+same      | 12f: after the end, a stranger signs for the whole over-funded vault, to the stranger's key
+same      | 12e: after the end, total to the beneficiary and the 5 extra tokens to a stranger's key
+same      | 12h: after the end, the kept vesting coin has released = 0 again
+same      | 12i: the whole over-funded vault at the end, the vesting coin kept with released = total + 5
+same      | 12g: after the end, the vesting coin kept twice
+same      | 12j: after the end, the kept vesting coin with less KAS
+same      | 13b (s-m2): a coin made with cliff 4.1e11, everything after the cliff
+same      | 12k: after the end, a coin of 7 sent later taken whole, the vesting coin ended with released 150,007
+same      | 13a (s-m1): a coin made with start 4.5e11, the honest first release
+same      | 13c (s-m3): a coin made with duration 4e9 and total 1e12, the honest first release
+same      | 13d (s-m4): the vault is a token coin owned by the token's own covenant id
+same      | 1a: one DAA unit before the cliff, 1 token
+same      | 13e (s-m5): claim, rest and an extra empty token coin for a stranger
+same      | 1b: one token more than vested (150,001 at 1,500)
+same      | 1c: after 100,000 released, one token more than the 200,000 due
+same      | 1d: at the cliff, after the cliff's tokens were released, 1 more token
+same      | 1e: a claim of 0
+same      | 1f: a claim of -5
+same      | 2a: the claim goes to a stranger's key
+same      | 2b: the claim's owner scheme is 0x01 (key hash) with the key's bytes
+same      | 2c: the claim's owner scheme is 0x04 with the key's bytes
+same      | 2d: the claim's owner scheme is 0x03 with the key's bytes
+same      | 2e: the claim carries another extension commitment
+same      | 3a: the rest goes to another covenant id
+same      | 3b: the rest has owner scheme 0x03 with the covenant id's bytes
+same      | 3c: the rest goes to the beneficiary's key
+same      | 3f: the rest is split into two coins of the covenant
+same      | 3d: the rest is one token short (the token's sum breaks too)
+same      | 3e: the rest's coin holds one sompi less KAS than the vault
+same      | 3g: the last release adds a token coin of 0 tokens for a stranger
+same      | 4a: next state, another beneficiary
+same      | 4b: next state, another token family
+same      | 4c: next state, another token template
+same      | 4d: next state, start one unit earlier
+same      | 4e: next state, cliff one unit shorter
+same      | 4f: next state, duration one unit shorter
+same      | 4g: next state, total one token larger
+same      | 4h: next state, released one token short
+same      | 4k: the vesting coin ends while tokens remain
+same      | 4j: the next vesting coin holds one sompi less KAS
+same      | 4i: next state, released left as it was
+same      | 4l: the next coin runs a contract without the time rule
+same      | 4n: at the end, the schedule's tokens taken from an over-funded vault, the vesting coin ended while 5 tokens stay with the covenant
+same      | 5b: the vault is a coin of another family, same KCC20 program and layout
+same      | 4m: two next vesting coins
+same      | 5a: a second coin of the token family, owned by the covenant, as a delegate
+same      | 5d: the token coin spent is the beneficiary's own (owner scheme 0x00)
+same      | 5c: a coin under the token's covenant id running a changed KCC20 program
+same      | 5f: a PublicMint coin of the token family in place of the vault
+same      | 6b: the vault leaves to a stranger without the vesting coin
+same      | 5e: the token coin spent has owner scheme 0x03 with the covenant id's bytes
+same      | 6a: a token of another family, owned by the covenant, leaves to a stranger in the same transaction
+same      | 5g: the token coin spent is owned by another covenant id (scheme 0x04)
+same      | 7a: no signature: 64 zero bytes and the type byte of All
+same      | 7b: a stranger's valid signature of the transaction
+same      | 7c: the beneficiary signs with type None
+same      | 7d: the beneficiary signs with type Single
+same      | 7e: the beneficiary signs with type All | AnyOneCanPay
+same      | 7f: the beneficiary signs with type None | AnyOneCanPay
+same      | 7g: the beneficiary signs with type Single | AnyOneCanPay
+same      | 8a: the claim's coin is open to borrowing by anyone (scheme 0x01, threshold 0)
+same      | 8b: the rest's coin is open to borrowing by anyone (scheme 0x01, threshold 0)
+same      | 7h: the beneficiary's signature of the honest release, in a release to a stranger
+same      | 8c: the rest's coin names a stranger's borrow key (scheme 0x02)
+same      | 9a: no token input at all, the vesting coin alone
+same      | 8d: the vault's transfer takes the borrow path in a release
+same      | 9b: tokens remain but only the claim's output exists
+same      | 9c: nine inputs, one more than the loop's bound
+same      | 9d: a claim of 2^63 - 1
+same      | 9e: a coin made with duration 4,000,000,000: the formula would overflow without the bound
+same      | 9f: a coin made with start 2^63 - 11 and cliff 100: start + cliff would overflow
+same      | 9g: a coin made with released > total
+same      | 9h: a coin made with released = -1,000
+same      | 9i: a coin made with cliff 2^63 - 6: start + cliff would overflow
+same      | 9j: a coin made with duration 0
+same      | 9k: a coin made with total 0
+same      | 9l: a coin made with start -1
+same      | 9m: a coin made with cliff -1
+same      | 9n: a coin made with total 0, the whole vault after the end
+same      | genesis of the vesting covenant
+same      | genesis of the vesting covenant
+same      | g3 1/2: coin A releases what is vested
+same      | g2: the beneficiary's key coin carrying the vesting id takes the whole vault before the cliff
+same      | g3 2/2: coin B, another coin of the same id, releases the same tokens again
+same      | g6: an honest release that also starts a new covenant anchored to the vesting input
+same      | kept coin 1/2: everything at the end, the vesting coin kept (released = total)
+same      | later coin 1/3: the first release, 150,000 of the vault
+same      | beyond 1: the whole over-funded vault (total + 5) at the end
+same      | chain 1/3: part of what is vested
+same      | kept coin 2/2: a coin of 7 tokens sent to the covenant later, taken with the kept coin
+same      | chain 2/3: the rest of what is vested at 5,000
+same      | later coin 2/3: after the end, a coin of 7 tokens sent to the covenant later, whole
+same      | first release after the cliff
+same      | chain 3/3: the last tokens, vault emptied
+same      | later coin 3/3: the rest of the vault, whole: released stops at total
+same      | large numbers: total 9e18, duration 3e9, one unit before the end
+same      | measure: first release
+same      | release of everything exactly at the end: no change, no next coin
+same      | release exactly at the cliff
+same      | partial release: 1 token of 400,000 vested
+same      | measure: first release at the relay fee floor
+same      | measure: one sompi under the fee floor
+same      | layout: the honest first release, contract with the seven-field token layout
+same      | layout: the honest first release, contract with the six-field token layout
+same      | l3: the schedule of the checks: the release of everything at the end
+same      | l1 1/2: over-funded vault, the schedule's tokens released at the end
+same      | l2: start 4e11 + cliff 1e11 = 5e11, the first timestamp lock time: every release is refused
+same      | l1 2/2: the 5 extra tokens, after the schedule's tokens were released
+same      | l3: start -1: the release of everything at the end
+same      | l3: start 0: the release of everything at the end
+same      | l3: start MAX_DAA: the release of everything at the end
+same      | l3: start MAX_DAA + 1: the release of everything at the end
+same      | l3: cliff -1: the release of everything at the end
+same      | l3: cliff 0: the release of everything at the end
+same      | l3: cliff MAX_DAA: the release of everything at the end
+same      | l3: cliff MAX_DAA + 1: the release of everything at the end
+same      | l3: start MAX_DAA, start + cliff = 5e11 - 1: the release of everything at the end
+same      | l3: start MAX_DAA, start + cliff = 5e11: the release of everything at the end
+same      | l3: duration 0: the release of everything at the end
+same      | l3: duration 1: the release of everything at the end
+same      | l3: duration MAX_DURATION: the release of everything at the end
+same      | l3: duration MAX_DURATION + 1: the release of everything at the end
+same      | l3: total 0: the release of everything at the end
+same      | l3: total 1: the release of everything at the end
+same      | l3: beneficiary not a key: the release of everything at the end
+same      | s2-d1: after the end, the vault and a later coin of 7 taken together
+same      | s2-d2: after the end, a later coin of 7 open to borrowing taken whole, the coin kept
+same      | s2-d4: after the end, a stranger takes 6 tokens out of a covenant coin open to borrowing
+same      | s2-d3: after the end, a vault open to borrowing taken whole, its call on the borrow path
+same      | s2-d5: after the end, 500,000 of total + 5, as signed
+same      | s2-d5: after the end, the whole total + 5, as signed
+same      | s2-d5: partial release, claim raised by one
+same      | s2-d5: partial release, claim lowered by one
+same      | s2-d5: partial release, claim raised to the whole vault
+same      | s2-d5: whole release, claim raised by one
+same      | s2-d5: whole release, claim lowered by one
+same      | s2-c1: before the end, a later coin of 7 taken whole, the vesting coin ended
+same      | s2-c3a: released 150,000, after the end a later coin of 7 taken whole, the vesting coin ended
+same      | s2-c2: before the end, a vault of 150,000 emptied at 1,500, the vesting coin ended
+same      | s2-c3b: the same against a step 8 that counts released by addition
+same      | s2-c7 1/4: after the end, a later coin of total taken whole first, the vesting coin kept
+same      | s2-c6: after the end, the kept coin runs the contract without the signature rule
+same      | s2-c4: after the end, the kept coin names a stranger as beneficiary
+same      | s2-c5: after the end, the kept coin keeps released 150,000 after taking 7
+same      | s2-c7 2/4: the main vault taken whole with the kept coin, which then ends
+same      | s2-c8: after the end, a kept coin (released = total) ended alone, no token coin
+same      | s2-c7 3/4: after the end, a later coin of total taken whole first, the vesting coin ended
+same      | s2-c7 4/4: the main vault cannot move once the vesting coin is gone
+same      | s2-a3a: after the end, a vault of 2^63 - 1 taken whole, the vesting coin ends
+same      | s2-a3b: released total - 1, after the end a vault of 2^63 - 1 taken whole, the coin kept with released = total
+same      | s2-a2: after the end, a claim of 2^63 - 1 from a vault of total + 5
+same      | s2-a1: after the end, a claim of total + 6 from a vault of total + 5
+same      | s2-t1: cliff 20,000 > duration 10,000, the whole over-funded vault at 15,000
+same      | s2-t2: cliff 20,000 > duration 10,000, the whole over-funded vault at the cliff
+same      | s2-a4: total 9e18, released total - 1, after the end a claim of 2^63 - 1 - 9e18 with a rest
+same      | s2-t4: duration 1, cliff 0, the whole over-funded vault one unit after the start
+same      | s2-a3c: released total - 1, after the end a vault of 2^63 - 1 taken whole, the coin kept with released = total - 1
+same      | s2-t5: the whole over-funded vault, lock time at the end, node at that DAA score
+same      | s2-t3: duration 1, cliff 0, one token at the start
+same      | s2-t6: every input final, lock time at the end, node at 1,500, the whole vault
+same      | s2-t7a: start 4e11, duration 3e9, the whole vault one unit before the end
+same      | s2-t7b: start 4e11, duration 3e9, the whole vault at the end
+same      | s-l1: genesis, output 0 a key coin and output 1 the vesting coin, one group
+same      | s-l4: the key coin bound to input 1 carries the vesting id of input 0's group
+same      | s-l2: genesis, one input, the vesting coin and a key coin in two groups
+same      | s-l3: the beneficiary's key coin with id fcdc2ef5d29abf76511715f50e51e5d7ef10b912ee7e86ffc08ae0b4b39b93f1 takes a vault owned by 68cdbdf338a72d7c3daebd4a9b0c5968ec30698d823d4435c93de8730676c71e
+same      | s-l5: a plain coin of the beneficiary's key, a new output carrying the vesting id
+same      | s-l2: the beneficiary's key coin with id 09f41fe11e4660aecd0b718bc28b94eb47889011058a663b333f934b14e6334b takes a vault owned by 68cdbdf338a72d7c3daebd4a9b0c5968ec30698d823d4435c93de8730676c71e
+same      | s-l6 1/2: start 4.5e11, cliff 1,000: the honest first release after the cliff
+same      | s-l9: start 4e11 + cliff 1e11 = 5e11, a timestamp lock time, asking for everything
+same      | s-l7: the vault is a coin of another token family, with the state check_vault wants
+same      | s-l8: release from a later coin of the family owned by the covenant, open to borrowing
+same      | s-l6 2/2: cliff 4.1e11: the honest first release after the cliff
+same      | s-y3 1/2: the honest release with a non-zero extension commitment
+same      | s-y2: the contract reads owner_scheme and borrow_scheme in swapped places
+same      | s-y3 2/2: the contract reads borrow_guard and extension_commitment in swapped places
+same      | s-m2 R06: a coin made with cliff 4.1e11, everything released after the cliff
+same      | s-m1 R04: a coin made with start 4.5e11, the honest first release
+same      | s-m4 R19: the vault is a token coin owned by the token's own covenant id
+same      | s-m3 R08: a coin made with duration 4e9 and total 1e12, the honest first release
+same      | s-m2 R06: a coin made with cliff 4.1e11, everything released after the cliff (contract without `require(cliff <= MAX_DAA);`)
+same      | s-m3 R08: a coin made with duration 4e9 and total 1e12, the honest first release (contract without `require(duration <= MAX_DURATION);`)
+same      | s-m1 R04: a coin made with start 4.5e11, the honest first release (contract without `require(start <= MAX_DAA);`)
+same      | s-m4 R19: the vault is a token coin owned by the token's own covenant id (contract without `require(vault.owner == own_covid);`)
+same      | s-m5 R22: claim, rest and an extra empty token coin for a stranger
+same      | s-m5 R22: claim, rest and an extra empty token coin for a stranger (contract without `require(OpCovOutputCount(token_covid) == 2);`)
+same      | s-u2 1/2: a stranger borrows one token into the vault, outside any release
+same      | s-u3: the honest first release, as signed
+same      | s-u1: a stranger borrows one token into the vault, outside any release
+same      | s-u4: the claim lowered by one by a relayer
+same      | s-u4: the claim raised by one by a relayer
+same      | s-u3: the claim padded to 8 bytes by a relayer
+same      | s-u5 1/2: the honest release also takes a coin delegated to the covenant
+same      | s-u5 2/2: the delegated coin without the vesting coin
+same      | s-u2 2/2: the release signed again for the moved vault (one token more in it)
+same      | s-u3: the claim in the OpPushData1 form by a relayer
+
+209 transactions: 209 judged the same on 2.1.0, 0 differently

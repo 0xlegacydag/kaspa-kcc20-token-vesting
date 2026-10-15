@@ -1,0 +1,24 @@
+[package]
+name = "token-vesting"
+description = "A SilverScript contract that holds KCC-20 reference tokens and releases them to one beneficiary on a schedule, with checks on the Kaspa script engine"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94.1"
+license = "ISC"
+publish = false
+
+[dependencies]
+# The engine suite of kaspa-kcc20-reference-study at a fixed revision: what a node checks
+# (node-gate) and the pinned KCC-20 reference as data (kcc20-family).
+node-gate = { git = "https://github.com/0xlegacydag/kaspa-kcc20-reference-study", rev = "4d111ffe8782bfb2b179ab5093683d16d6446f37" }
+kcc20-family = { git = "https://github.com/0xlegacydag/kaspa-kcc20-reference-study", rev = "4d111ffe8782bfb2b179ab5093683d16d6446f37" }
+# The same revisions the suite and the KCC-20 reference pin.
+silverscript-lang = { git = "https://github.com/kaspanet/silverscript", rev = "3ed973335b59269293564805cc2c58a14595ec03", package = "silverscript-lang" }
+silverscript-abi = { git = "https://github.com/kaspanet/silverscript", rev = "3ed973335b59269293564805cc2c58a14595ec03", package = "silverscript-abi" }
+kaspa-consensus-core = { git = "https://github.com/kaspanet/rusty-kaspa", rev = "a41a333b08848f41bf737b72592e463a6011b8ac" }
+kaspa-txscript = { git = "https://github.com/kaspanet/rusty-kaspa", rev = "a41a333b08848f41bf737b72592e463a6011b8ac" }
+kaspa-txscript-errors = { git = "https://github.com/kaspanet/rusty-kaspa", rev = "a41a333b08848f41bf737b72592e463a6011b8ac" }
+kaspa-hashes = { git = "https://github.com/kaspanet/rusty-kaspa", rev = "a41a333b08848f41bf737b72592e463a6011b8ac" }
+secp256k1 = { version = "0.29", features = ["global-context", "rand-std"] }
+serde_json = "1"
+faster-hex = "0.10"
