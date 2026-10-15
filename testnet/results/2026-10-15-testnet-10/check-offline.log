@@ -1,0 +1,33 @@
+file    : chain.json, SHA-256 660d6db1ee4a45862435033f7751bd3c21c2283670f5e1e6426df8423d61c3cd
+check a  format, network, limits, launch checks, gates  : ok
+check b  the moves, lock times, windows, refusals       : ok
+check c  parties and their addresses                    : ok
+check d  transaction ids rebuilt by the SDK             : ok
+check e  linkage of the coins                           : ok
+check f  fees                                           : ok
+check g  outputs go to the contracts and the payer      : ok
+check h  vesting covenant id                            : ok - derived by the SDK from 'A1 vesting genesis', 1 output(s)
+check i  states, releases, tokens                       : ok
+check j  locks from states                              : ok - KCC20 recomputed for 14 coins, the template hash compared; the 6 TokenVesting locks are NOT recomputed by this program (check l)
+check l  TokenVesting locks, the verifier's report      : ok - the verifier's report (SHA-256 9cfdd4571b70f76ccacdd90457bb806b47d89306444ea8e917c5bbf853d8c091) confirms the 6 TokenVesting locks
+check k  summary
+  vesting id    : 82595cf62929f94559e1b93406adeeeaaa2b931f547292e4ac5401cbbc5a9b1b
+  token id      : 0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a
+  funding coin  : 16.61402000 KAS of 'payer', c5f46d16f2df63f1c86584de96942ae6ab9a0210880a4805d5040ed6fc72bcde:2
+  token coin    : 78e23990321b7decd966c14887b59806310b6faed043a3cbe44de2489c989da5:1, 10 tokens
+  schedule      : start 597207388, cliff +3000, duration 10000, total 10
+  moves         : 5 steps, 4 probes
+  fees          : 0.62222400 KAS over the steps, 0.69090400 KAS over the probes (cap of the file 8.00000000, feerate 200 sompi per gram)
+  left locked   : 3.00000000 KAS in covenant coins after the last step
+  left change   : 13.99179600 KAS to the payer
+  tokens        : beneficiary 10
+    step  A1 vesting genesis: lock time 0, sent above 0 [fee 0.08008400]
+    step  A2 fund the vault: lock time 0, sent above 0 [fee 0.07040800]
+    probe B1 before the cliff: lock time 597208388, sent above 597208408 [fee 0.21277200]; refused with 'Unsatisfied lock time'
+    probe B2 dated at the end: lock time 597217388, sent above 597208408, not at or after 597215388 [fee 0.05258800]; refused with 'is not finalized'
+    probe B3 more than vested: lock time 597210388, sent above 597210408 [fee 0.21277200]; refused with 'verification failed'
+    probe B4 to another key: lock time 597210388, sent above 597210408 [fee 0.21277200]; refused with 'verification failed'
+    step  R1 first release: lock time 597210388, sent above 597210408 [fee 0.21277200]
+    step  R2 second release: lock time 597213888, sent above 597213908 [fee 0.21077200]
+    step  R3 the rest: lock time 597217388, sent above 597217408 [fee 0.04818800]
+check: passed (offline). The network was not read.

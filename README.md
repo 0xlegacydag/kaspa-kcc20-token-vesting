@@ -12,8 +12,9 @@ the beneficiary may take a token coin of the contract whole, tokens beyond the s
 included. It comes with checks: almost every case is a whole transaction, judged by the
 script engine and the transaction rules of a Kaspa node, run offline.
 
-Nothing here touched a network. The contract passed the checks listed below; that is all
-this page claims. It is not safe or ready for anything but study.
+The contract passed the checks listed below, and one run on the Kaspa test network
+testnet-10 with test coins ("On testnet-10" below); that is all this page claims. It is
+not safe or ready for anything but study.
 
 On this page a "coin" is a UTXO and a "move" is a transaction.
 
@@ -172,6 +173,10 @@ own message.
 | `tests/review_beyond_continuation.rs` | 9 | the contract coin ended or kept before and after the end; a kept coin with changed fields or another program; a later coin that brings `released` to `total` while the vault still holds tokens |
 | `tests/review_beyond_combo.rs` | 5 | two token coins at once, coins open to borrowing after the end, a relayer rewriting the claim after the end |
 
+`tests/testnet_chain.rs` and `tests/testnet_verify.rs` are not checks of the contract: they
+are the builder and the verifier of the testnet run (`testnet/README.md`). `cargo test`
+leaves them out (`test = false` in `Cargo.toml`).
+
 The `review_*` files hold further cases: attacks on the contract, on its launch and on the
 release of tokens beyond the schedule. The names of the cases start with their group:
 `f` forbidden moves (the number is the group), `g` genesis, `l` liveness, `s_l` launch,
@@ -248,12 +253,32 @@ The first release after the cliff, coins of 1 KAS, fee at the relay floor
 | Compute budgets | vesting input 22 (224,167 script units), vault 4 (44,342), payer 10 (100,001) |
 | Smallest fee the mempool relays | 1,402,800 sompi (about 0.014 KAS); one sompi less is refused by the mempool, accepted in a block |
 
+## On testnet-10
+
+On 2026-10-15 the contract ran once on testnet-10, with test coins and throwaway keys: a
+vesting coin, a vault of 10 tokens of a test token made from the KCC20 reference, three
+releases (3 tokens at the cliff, 3 more halfway, the last 4 at the end of the schedule),
+and four moves that must be refused, sent between them. Nodes of version 2.1.0 accepted
+the five honest moves exactly as they were built and signed offline, and refused the four:
+
+| Forbidden move | The node's answer |
+|---|---|
+| a release before the cliff | `Unsatisfied lock time`: the contract's `require(tx.daa >= start + cliff)` |
+| everything, dated at the end of the schedule and sent long before it | `transaction input #0 is not finalized`, before any script |
+| more than has vested | `script ran, but verification failed` |
+| the claim owned by another key | `script ran, but verification failed` |
+
+The record, with every transaction, the nodes' answers word for word and links to a public
+explorer: [testnet/results/2026-10-15-testnet-10](testnet/results/2026-10-15-testnet-10/README.md).
+The programs that built, verified and sent the chain, and how to check the record again:
+[testnet/README.md](testnet/README.md).
+
 ## What this does not show
 
-- A live network: no transaction was sent; the rules around the engine are a port of one
-  revision.
-- The genesis of the vesting coin and of the token: no script checks them (see above), and no
-  check here runs on a real genesis.
+- A live network beyond one run: one schedule, one fee rate, one day on testnet-10 (above);
+  the rules around the engine in the checks are a port of one revision.
+- The genesis of the vesting coin and of the token: no script checks them (see above); the
+  launch checks ran on one real genesis, that of the testnet run.
 - Revocation, several tranches, several beneficiaries: not built.
 - Any other token program: only the pinned KCC20 template, whose prefix and suffix lengths
   (1 and 3885 bytes) are constants of the contract.
@@ -303,6 +328,10 @@ with the Microsoft toolchain the replay crate does not build as published: the
 `kaspa-hashes` 2.1.0 package on crates.io lacks `keccakf1600_x86-64-msvc.asm`, which the
 rusty-kaspa repository has. The main suite takes rusty-kaspa from git and is not affected.
 
+The programs of the testnet run, their tests and the check of its record need Python 3.12
+as well, with the pinned Kaspa SDK (`python -m pip install --require-hashes -r
+requirements.txt`): `testnet/README.md`, "Tests" and "Checking the record of the run".
+
 Checking the checks, back in the root; it builds and runs the honest and forbidden cases 31
 times, and the last line of `results/mutation-run.txt` gives the time of its last run:
 
@@ -313,8 +342,11 @@ node tools/mutation-run.mjs
 The workflow [`.github/workflows/checks.yml`](.github/workflows/checks.yml) runs the first
 block of commands on pushes to `main`, on pull requests and when started by hand, on
 machines hosted by GitHub: `ubuntu-24.04`, `macos-26` and `windows-2025`, in bash; on
-`ubuntu-24.04` it also runs the replay. It does not run the replay on Windows (see above) or
-on macOS (to keep the run short), nor the mutation run. A green mark beside a commit says
+`ubuntu-24.04` it also runs the replay. On all three it runs the builder's self-test and
+the verifier on the chain file of the testnet run, and, in a job of its own, the tests of
+the sender, its check of that chain file and the checksums the record names. It does not
+run the replay on Windows (see above) or on macOS (to keep the run short), nor the mutation
+run, nor anything that asks the network. A green mark beside a commit says
 that these commands passed on those machines for that commit; for a pull request they are
 run on its merge with the base branch. A red mark can also have its cause outside this
 repository: every run downloads the Rust toolchain, the dependencies and the reference again.
@@ -329,8 +361,9 @@ repository: every run downloads the Rust toolchain, the dependencies and the ref
 | Argent | `9a9f4b1` |
 | `node-gate`, `kcc20-family` | [kaspa-kcc20-reference-study](https://github.com/0xlegacydag/kaspa-kcc20-reference-study) at `4d111ff` |
 | Rust | 1.94.1 |
+| Kaspa Python SDK | `kaspa` 2.1.0 from PyPI (the sender of the testnet run), Python 3.12 |
 
-Every version is pinned by `Cargo.lock` and `engine-2.1.0/Cargo.lock`.
+Every version is pinned by `Cargo.lock`, `engine-2.1.0/Cargo.lock` and `requirements.txt`.
 
 ## License
 

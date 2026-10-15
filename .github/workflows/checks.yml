@@ -13,8 +13,15 @@
 # replay crate does not build as published: the kaspa-hashes 2.1.0 package on crates.io
 # lacks keccakf1600_x86-64-msvc.asm. It is not run on macOS, to keep the run short.
 #
+# On Linux, macOS and Windows as well, the programs of the testnet-10 run (testnet/README.md):
+# the builder's self-test with made-up keys, and the verifier on the chain file of the run
+# of 2026-10-15, whose report must be the one in the record byte for byte; in a job of its
+# own, the tests of the sender, its check of that chain file, and the three checksums the
+# record of the run names.
+#
 # Not run here: the mutation run of tools/mutation-run.mjs, which builds and runs the honest
-# and forbidden cases 31 times (the time of its last run: results/mutation-run.txt).
+# and forbidden cases 31 times (the time of its last run: results/mutation-run.txt); the
+# builder with real keys; and the sender's prepare, send and status, which ask a public node.
 name: checks
 
 on:
@@ -81,6 +88,22 @@ jobs:
           export VESTING_DUMP_DIR=target/vesting-dump
           node tools/run-checks.mjs
 
+      - name: "The builder of the testnet run: its self-test with made-up keys"
+        run: |
+          KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
+          export KCC20_REFERENCE_DIR
+          cargo test --frozen --test testnet_chain
+
+      - name: "The record of the testnet run: every lock computed again, the same report"
+        run: |
+          KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
+          export KCC20_REFERENCE_DIR
+          export VESTING_VERIFY_CHAIN=testnet/results/2026-10-15-testnet-10/chain.json
+          export VESTING_VERIFY_REPORT=target/verify-of-the-run.json
+          rm -f "$VESTING_VERIFY_REPORT"
+          cargo test --frozen --test testnet_verify
+          cmp "$VESTING_VERIFY_REPORT" testnet/results/2026-10-15-testnet-10/verify.json
+
       - name: "The replay on 2.1.0: cargo fetch --locked"
         if: runner.os == 'Linux'
         working-directory: engine-2.1.0
@@ -110,3 +133,61 @@ jobs:
           if [ -d target ]; then du -sh target; fi
           if [ -d engine-2.1.0/target ]; then du -sh engine-2.1.0/target; fi
           df -h .
+
+  testnet:
+    name: testnet (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-26, windows-2025]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install the pinned Kaspa SDK
+        run: |
+          python --version
+          python -m pip --version
+          python -m pip install --require-hashes -r requirements.txt
+
+      - name: Tests of the sender
+        working-directory: testnet
+        run: python -m unittest discover -s tests
+
+      - name: The chain file of the run, by the sender's rules
+        working-directory: testnet
+        run: >
+          python vesting_send.py check results/2026-10-15-testnet-10/chain.json
+          --party payer=kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
+          --party alice=kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
+          --party beneficiary=kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf
+          --verify-report results/2026-10-15-testnet-10/verify.json
+
+      - name: The three checksums the record of the run names
+        working-directory: testnet
+        run: |
+          python - <<'EOF'
+          import glob, hashlib, json, sys
+          run = "results/2026-10-15-testnet-10"
+          (record,) = glob.glob(run + "/record/run-*Z.jsonl")
+          with open(record, encoding="utf-8") as lines:
+              first = json.loads(lines.readline())
+          bad = 0
+          for want, name in (
+              (first["chain_sha256"], run + "/chain.json"),
+              (first["verify_report_sha256"], run + "/verify.json"),
+              (first["program_sha256"], "vesting_send.py"),
+          ):
+              with open(name, "rb") as file:
+                  have = hashlib.sha256(file.read()).hexdigest()
+              print(name, have, "ok" if have == want else "DIFFERENT, the record names " + want)
+              bad += have != want
+          sys.exit(1 if bad else 0)
+          EOF

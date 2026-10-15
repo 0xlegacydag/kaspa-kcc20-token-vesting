@@ -6,3 +6,7 @@ results/** -text
 
 # The page about the runs is prose, not program output: LF like every other text file.
 results/README.md text eol=lf
+
+# The same for the record of the testnet run: its files byte for byte, its page LF.
+testnet/results/** -text
+testnet/results/*/README.md text eol=lf

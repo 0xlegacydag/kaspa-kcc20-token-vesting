@@ -1,0 +1,129 @@
+file    : chain.json, SHA-256 660d6db1ee4a45862435033f7751bd3c21c2283670f5e1e6426df8423d61c3cd
+check a  format, network, limits, launch checks, gates  : ok
+check b  the moves, lock times, windows, refusals       : ok
+check c  parties and their addresses                    : ok
+check d  transaction ids rebuilt by the SDK             : ok
+check e  linkage of the coins                           : ok
+check f  fees                                           : ok
+check g  outputs go to the contracts and the payer      : ok
+check h  vesting covenant id                            : ok - derived by the SDK from 'A1 vesting genesis', 1 output(s)
+check i  states, releases, tokens                       : ok
+check j  locks from states                              : ok - KCC20 recomputed for 14 coins, the template hash compared; the 6 TokenVesting locks are NOT recomputed by this program (check l)
+check l  TokenVesting locks, the verifier's report      : ok - the verifier's report (SHA-256 9cfdd4571b70f76ccacdd90457bb806b47d89306444ea8e917c5bbf853d8c091) confirms the 6 TokenVesting locks
+check k  summary
+  vesting id    : 82595cf62929f94559e1b93406adeeeaaa2b931f547292e4ac5401cbbc5a9b1b
+  token id      : 0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a
+  funding coin  : 16.61402000 KAS of 'payer', c5f46d16f2df63f1c86584de96942ae6ab9a0210880a4805d5040ed6fc72bcde:2
+  token coin    : 78e23990321b7decd966c14887b59806310b6faed043a3cbe44de2489c989da5:1, 10 tokens
+  schedule      : start 597207388, cliff +3000, duration 10000, total 10
+  moves         : 5 steps, 4 probes
+  fees          : 0.62222400 KAS over the steps, 0.69090400 KAS over the probes (cap of the file 8.00000000, feerate 200 sompi per gram)
+  left locked   : 3.00000000 KAS in covenant coins after the last step
+  left change   : 13.99179600 KAS to the payer
+  tokens        : beneficiary 10
+    step  A1 vesting genesis: lock time 0, sent above 0 [fee 0.08008400]
+    step  A2 fund the vault: lock time 0, sent above 0 [fee 0.07040800]
+    probe B1 before the cliff: lock time 597208388, sent above 597208408 [fee 0.21277200]; refused with 'Unsatisfied lock time'
+    probe B2 dated at the end: lock time 597217388, sent above 597208408, not at or after 597215388 [fee 0.05258800]; refused with 'is not finalized'
+    probe B3 more than vested: lock time 597210388, sent above 597210408 [fee 0.21277200]; refused with 'verification failed'
+    probe B4 to another key: lock time 597210388, sent above 597210408 [fee 0.21277200]; refused with 'verification failed'
+    step  R1 first release: lock time 597210388, sent above 597210408 [fee 0.21277200]
+    step  R2 second release: lock time 597213888, sent above 597213908 [fee 0.21077200]
+    step  R3 the rest: lock time 597217388, sent above 597217408 [fee 0.04818800]
+via     : wss://alpha-10.kaspa.stream/kaspa/testnet-10/wrpc/borsh, node version 2.1.0
+estimate: priority bucket {'feerate': 100.0, 'estimatedSeconds': 0.0009675772497377539}
+estimate: normal buckets  [{'feerate': 100.0, 'estimatedSeconds': 0.0009675772497377539}, {'feerate': 100.0, 'estimatedSeconds': 0.0009675772497377539}]
+estimate: low buckets     [{'feerate': 100.0, 'estimatedSeconds': 0.0009675772497377539}]
+feerate : the file was built at 200 sompi per gram; the node's priority estimate now gives 100
+DAA     : virtual DAA score 597202444; schedule start 597207388 (4944 to go)
+window  : 'B2 dated at the end': open from above 597208408 to below 597215388, 12944 left
+on chain: the funding coin and the token coin are unspent, with the stated value, script and covenant id; no step is on chain
+built   : 'A1 vesting genesis' builds for sending from the node's own entries; not submitted
+record  : runs\2026-10-15\record\run-20261015T084329298617Z.jsonl
+before : payer       962.01791316 KAS in 7 coin(s) at kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
+before : alice       0.00000000 KAS in 0 coin(s) at kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
+before : beneficiary 0.00000000 KAS in 0 coin(s) at kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf
+step 'A1 vesting genesis': submitting bf9bd3a6ad32e0b2dfc056978c5c41ec434d253e26601e98973fe64f9f028e35 at DAA score 597202456 (lock time 0, fee 0.08008400 KAS)
+step 'A1 vesting genesis': ACCEPTED bf9bd3a6ad32e0b2dfc056978c5c41ec434d253e26601e98973fe64f9f028e35
+step 'A1 vesting genesis': all 2 outputs seen after 1.2 s with the expected value, script and covenant id
+step 'A2 fund the vault': submitting 51e5cbb6a9278a122848327ee3943ecac89c1d7ff3bbc98de4a5bd4e7693a947 at DAA score 597202467 (lock time 0, fee 0.07040800 KAS)
+step 'A2 fund the vault': ACCEPTED 51e5cbb6a9278a122848327ee3943ecac89c1d7ff3bbc98de4a5bd4e7693a947
+step 'A2 fund the vault': all 2 outputs seen after 1.2 s with the expected value, script and covenant id
+probe 'B1 before the cliff': waiting for a DAA score above 597208408; now 597202482, about 593 s at 10.00 per second; giving up after 1193 s
+probe 'B1 before the cliff': DAA score 597202801, 5608 to go (30 s waited)
+probe 'B1 before the cliff': DAA score 597203104, 5305 to go (61 s waited)
+probe 'B1 before the cliff': DAA score 597203387, 5022 to go (91 s waited)
+probe 'B1 before the cliff': DAA score 597203656, 4753 to go (122 s waited)
+probe 'B1 before the cliff': DAA score 597203968, 4441 to go (152 s waited)
+probe 'B1 before the cliff': DAA score 597204261, 4148 to go (182 s waited)
+probe 'B1 before the cliff': DAA score 597204547, 3862 to go (213 s waited)
+probe 'B1 before the cliff': DAA score 597204890, 3519 to go (243 s waited)
+probe 'B1 before the cliff': DAA score 597205199, 3210 to go (273 s waited)
+probe 'B1 before the cliff': DAA score 597205498, 2911 to go (304 s waited)
+probe 'B1 before the cliff': DAA score 597205804, 2605 to go (334 s waited)
+probe 'B1 before the cliff': DAA score 597206073, 2336 to go (364 s waited)
+probe 'B1 before the cliff': DAA score 597206362, 2047 to go (395 s waited)
+probe 'B1 before the cliff': DAA score 597206686, 1723 to go (425 s waited)
+probe 'B1 before the cliff': DAA score 597207002, 1407 to go (456 s waited)
+probe 'B1 before the cliff': DAA score 597207306, 1103 to go (486 s waited)
+probe 'B1 before the cliff': DAA score 597207585, 824 to go (516 s waited)
+probe 'B1 before the cliff': DAA score 597207868, 541 to go (547 s waited)
+probe 'B1 before the cliff': DAA score 597208178, 231 to go (577 s waited)
+probe 'B1 before the cliff': submitting 971a81e7802ac055cef34536d75780aebbc62948a1626f9af091a97537afcac6 at DAA score 597208452 (lock time 597208388), expecting a refusal containing 'Unsatisfied lock time'
+probe 'B1 before the cliff': REFUSED as expected
+reason  : RPC Server (remote error) -> Rejected transaction 971a81e7802ac055cef34536d75780aebbc62948a1626f9af091a97537afcac6: failed to verify the signature script: Unsatisfied lock time: locktime requirement not satisfied -- locktime is greater than the transaction locktime: 597210388 > 597208388
+probe 'B2 dated at the end': submitting 4a64fd8d81a56cff02876136a89965829008b00f0ef518d7c2bd4b1e061775e3 at DAA score 597208455 (lock time 597217388), expecting a refusal containing 'is not finalized'
+probe 'B2 dated at the end': REFUSED as expected
+reason  : RPC Server (remote error) -> Rejected transaction 4a64fd8d81a56cff02876136a89965829008b00f0ef518d7c2bd4b1e061775e3: transaction input #0 is not finalized
+probe 'B3 more than vested': waiting for a DAA score above 597210408; now 597208456, about 197 s at 9.92 per second; giving up after 797 s
+probe 'B3 more than vested': DAA score 597208779, 1630 to go (30 s waited)
+probe 'B3 more than vested': DAA score 597209085, 1324 to go (61 s waited)
+probe 'B3 more than vested': DAA score 597209389, 1020 to go (91 s waited)
+probe 'B3 more than vested': DAA score 597209697, 712 to go (121 s waited)
+probe 'B3 more than vested': DAA score 597210000, 409 to go (152 s waited)
+probe 'B3 more than vested': DAA score 597210314, 95 to go (182 s waited)
+probe 'B3 more than vested': submitting a99bc7dc2ec69a0c52c0403bb516c7f2607a819676f1d60a7f9914c77de83c31 at DAA score 597210462 (lock time 597210388), expecting a refusal containing 'verification failed'
+probe 'B3 more than vested': REFUSED as expected
+reason  : RPC Server (remote error) -> Rejected transaction a99bc7dc2ec69a0c52c0403bb516c7f2607a819676f1d60a7f9914c77de83c31: failed to verify the signature script: script ran, but verification failed
+probe 'B4 to another key': submitting 92d4870386ed4624da5793576c6ce0f44ee9d66800a627e0524feb35945f9a3a at DAA score 597210463 (lock time 597210388), expecting a refusal containing 'verification failed'
+probe 'B4 to another key': REFUSED as expected
+reason  : RPC Server (remote error) -> Rejected transaction 92d4870386ed4624da5793576c6ce0f44ee9d66800a627e0524feb35945f9a3a: failed to verify the signature script: script ran, but verification failed
+step 'R1 first release': submitting 786260db9405b405687d73f0fc6ca22c032a52ce8aebd8c09f5e9acb55997e3e at DAA score 597210465 (lock time 597210388, fee 0.21277200 KAS)
+step 'R1 first release': ACCEPTED 786260db9405b405687d73f0fc6ca22c032a52ce8aebd8c09f5e9acb55997e3e
+step 'R1 first release': all 4 outputs seen after 1.5 s with the expected value, script and covenant id
+step 'R2 second release': waiting for a DAA score above 597213908; now 597210473, about 345 s at 9.96 per second; giving up after 945 s
+step 'R2 second release': DAA score 597210797, 3112 to go (30 s waited)
+step 'R2 second release': DAA score 597211112, 2797 to go (61 s waited)
+step 'R2 second release': DAA score 597211431, 2478 to go (91 s waited)
+step 'R2 second release': DAA score 597211737, 2172 to go (122 s waited)
+step 'R2 second release': DAA score 597212032, 1877 to go (152 s waited)
+step 'R2 second release': DAA score 597212347, 1562 to go (182 s waited)
+step 'R2 second release': DAA score 597212644, 1265 to go (213 s waited)
+step 'R2 second release': DAA score 597212970, 939 to go (243 s waited)
+step 'R2 second release': DAA score 597213281, 628 to go (273 s waited)
+step 'R2 second release': DAA score 597213587, 322 to go (304 s waited)
+step 'R2 second release': DAA score 597213883, 26 to go (334 s waited)
+step 'R2 second release': submitting 3b5b025f4e6ee2e55fa56644ce2b47235df113a378033dbfd39b25ff97c9d8e0 at DAA score 597213935 (lock time 597213888, fee 0.21077200 KAS)
+step 'R2 second release': ACCEPTED 3b5b025f4e6ee2e55fa56644ce2b47235df113a378033dbfd39b25ff97c9d8e0
+step 'R2 second release': all 4 outputs seen after 1.4 s with the expected value, script and covenant id
+step 'R3 the rest': waiting for a DAA score above 597217408; now 597213949, about 345 s at 10.03 per second; giving up after 945 s
+step 'R3 the rest': DAA score 597214248, 3161 to go (30 s waited)
+step 'R3 the rest': DAA score 597214527, 2882 to go (61 s waited)
+step 'R3 the rest': DAA score 597214832, 2577 to go (91 s waited)
+step 'R3 the rest': DAA score 597215097, 2312 to go (122 s waited)
+step 'R3 the rest': DAA score 597215401, 2008 to go (152 s waited)
+step 'R3 the rest': DAA score 597215705, 1704 to go (182 s waited)
+step 'R3 the rest': DAA score 597215995, 1414 to go (213 s waited)
+step 'R3 the rest': DAA score 597216277, 1132 to go (243 s waited)
+step 'R3 the rest': DAA score 597216561, 848 to go (273 s waited)
+step 'R3 the rest': DAA score 597216847, 562 to go (304 s waited)
+step 'R3 the rest': DAA score 597217130, 279 to go (334 s waited)
+step 'R3 the rest': DAA score 597217407, 2 to go (364 s waited)
+step 'R3 the rest': submitting 5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460 at DAA score 597217462 (lock time 597217388, fee 0.04818800 KAS)
+step 'R3 the rest': ACCEPTED 5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460
+step 'R3 the rest': all 2 outputs seen after 1.2 s with the expected value, script and covenant id
+after  : payer       959.39568916 KAS in 7 coin(s) at kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
+after  : alice       0.00000000 KAS in 0 coin(s) at kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
+after  : beneficiary 0.00000000 KAS in 0 coin(s) at kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf
+finished: 4 refused as expected; 5 sent
+send exit 0

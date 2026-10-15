@@ -25,6 +25,9 @@ const EXPECTED_FAILURES = {
 };
 // Every other check passes.
 const EXPECTED_PASSED = 163;
+// The builder of the testnet-10 run and its verifier: programs, not checks; Cargo.toml keeps
+// them out of `cargo test` (testnet/README.md).
+const PROGRAMS = new Set(["testnet_chain", "testnet_verify"]);
 
 const here = resolve(".");
 // Exit codes are set, not forced: a forced exit may cut what is still on its way to a pipe.
@@ -46,7 +49,8 @@ if (!reference || !existsSync(join(reference, "fixtures"))) {
 function run() {
   const testFiles = readdirSync(join(here, "tests"))
     .filter((name) => name.endsWith(".rs"))
-    .map((name) => name.slice(0, -3));
+    .map((name) => name.slice(0, -3))
+    .filter((name) => !PROGRAMS.has(name));
 
   const cargo = spawn("cargo", ["test", "--frozen", "--no-fail-fast"], {
     cwd: here,

@@ -1,0 +1,16 @@
+{
+  "covenant_id": "0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a",
+  "state": {
+    "amount": 10,
+    "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+    "borrow_scheme": 0,
+    "contract": "KCC20",
+    "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000",
+    "owner": "41787492bc8473d7411c706362a84cc2debaf38e19fbae262100b3c4bc89a622",
+    "owner_scheme": 0
+  },
+  "source": "kaspa-kcc20-reference-study@6b3957b launch/results/2026-10-11-testnet-10/chain.json, step \"09 mint\", output 1: token coin of Alice: 10 tokens",
+  "outpoint": "78e23990321b7decd966c14887b59806310b6faed043a3cbe44de2489c989da5:1",
+  "value": 100000000,
+  "script_public_key": "aa20a3d2f24f629f0bac51f09babc6164c3a3b2a132489f77fb268c11ec6ccf081e587"
+}

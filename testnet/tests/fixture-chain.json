@@ -1,0 +1,1415 @@
+{
+ "format": "vesting-launch-chain/1",
+ "network": "testnet-10",
+ "built_at_utc": "2026-01-01T12:05:00Z",
+ "nothing_was_sent": true,
+ "coin_value": 100000000,
+ "feerate": 200,
+ "fee_rule": "made up for the test fixture: every move pays 250000 sompi",
+ "fee_cap_total": 800000000,
+ "schedule": {
+  "start": 597154140,
+  "cliff": 3000,
+  "duration": 10000,
+  "total": 10
+ },
+ "funding": {
+  "transaction_id": "8b39e76a9e43078d023c10038d407c24caf9fdd632ca78c8fb6aa7dd3efb4a00",
+  "index": 2,
+  "value": 1661402000,
+  "script_public_key_version": 0,
+  "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+  "block_daa_score": 593874770,
+  "owner": "payer"
+ },
+ "token": {
+  "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+  "template_hash": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+  "coin": {
+   "transaction_id": "a71d5d8f2a60ab9741b7507c83a55d6346750420ab202bfd48572d00b61b9da3",
+   "index": 1,
+   "value": 100000000,
+   "script_public_key_version": 0,
+   "script_public_key": "aa20ed4ebaa8280caf6958ee17de7a903ca2c235f831915a99c08a34f662c8101db387",
+   "block_daa_score": 593874700
+  },
+  "state": {
+   "contract": "KCC20",
+   "amount": 10,
+   "owner": "ab5d2e79cfd621b1b027ffb24e2453ed7fb571ba9a841ff0e2473466cabd168d",
+   "owner_scheme": 0,
+   "borrow_scheme": 0,
+   "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+   "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+ },
+ "vesting_covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+ "parties": {
+  "payer": {
+   "x_only_public_key": "0ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03",
+   "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac"
+  },
+  "alice": {
+   "x_only_public_key": "ab5d2e79cfd621b1b027ffb24e2453ed7fb571ba9a841ff0e2473466cabd168d",
+   "script_public_key": "20ab5d2e79cfd621b1b027ffb24e2453ed7fb571ba9a841ff0e2473466cabd168dac"
+  },
+  "beneficiary": {
+   "x_only_public_key": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+   "script_public_key": "20ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2ac"
+  }
+ },
+ "launch_checks": {
+  "check_vesting_genesis": "ok",
+  "check_parameters": "ok",
+  "check_vault": "ok"
+ },
+ "moves": [
+  {
+   "name": "A1 vesting genesis",
+   "kind": "step",
+   "what": "the payer's coin creates the vesting coin",
+   "expect": "accepted",
+   "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+   "version": 1,
+   "lock_time": 0,
+   "send_after_daa": 0,
+   "send_before_daa": null,
+   "judged_at_daa": 597148140,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "8b39e76a9e43078d023c10038d407c24caf9fdd632ca78c8fb6aa7dd3efb4a00",
+     "index": 2,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": "funding",
+      "value": 1661402000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's funding coin"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 0
+     },
+     "what": "vesting coin, 0 released"
+    },
+    {
+     "value": 1561152000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": true,
+    "mempool": true,
+    "block": true,
+    "refusal": null
+   },
+   "refusal_expected": null,
+   "twin": null
+  },
+  {
+   "name": "A2 fund the vault",
+   "kind": "step",
+   "what": "Alice moves her 10-token coin whole to the vesting covenant",
+   "expect": "accepted",
+   "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+   "version": 1,
+   "lock_time": 0,
+   "send_after_daa": 0,
+   "send_before_daa": null,
+   "judged_at_daa": 597148140,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "a71d5d8f2a60ab9741b7507c83a55d6346750420ab202bfd48572d00b61b9da3",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": "token_coin",
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa20ed4ebaa8280caf6958ee17de7a903ca2c235f831915a99c08a34f662c8101db387",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "Alice's 10-token coin"
+     }
+    },
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 1
+      },
+      "value": 1561152000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 10,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 10 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 1560902000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": true,
+    "mempool": true,
+    "block": true,
+    "refusal": null
+   },
+   "refusal_expected": null,
+   "twin": null
+  },
+  {
+   "name": "B1 before the cliff",
+   "kind": "probe",
+   "what": "a release of 1 token dated before the cliff",
+   "expect": "refused",
+   "transaction_id": "a6d11ea63b93504ebef998fe39c9a89789293f5f0c40b55bc29a5757bb6c70e0",
+   "version": 1,
+   "lock_time": 597155140,
+   "send_after_daa": 597155160,
+   "send_before_daa": null,
+   "judged_at_daa": 597155160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 0 released"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 10 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 1
+      },
+      "value": 1560902000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa207165eb71d71b3edd6b460373f4f306f4f56cb8765f7c6e3e733494974f6423eb87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 1,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "1 tokens of beneficiary"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa203ad00e4ef2202251053cc82ddefd40e693b73de387a264ea7a229c8328d2ebb987",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 9,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 9 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa2087a9c3e1a3e0d76a57eaa589a212b3947f0238f624af7d92be8168dc1bf641e687",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 1
+     },
+     "what": "vesting coin, 1 released"
+    },
+    {
+     "value": 1460652000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": false,
+    "consensus": false,
+    "mempool": false,
+    "block": false,
+    "refusal": {
+     "layer": "scripts",
+     "input": 0,
+     "rule": null,
+     "message": "script ran, but verification failed"
+    }
+   },
+   "refusal_expected": {
+    "kind": "scripts",
+    "input": 0,
+    "contract_line": "require(tx.locktime >= start + cliff);",
+    "node_message_contains": "verification failed"
+   },
+   "twin": {
+    "accepted": true,
+    "judged_at_daa": 597155160,
+    "what": "lock time at the cliff"
+   }
+  },
+  {
+   "name": "B2 dated at the end",
+   "kind": "probe",
+   "what": "all 10 tokens dated at the end of the schedule, sent long before it",
+   "expect": "refused",
+   "transaction_id": "dedb8c42cd9625474c9b401cd9cbdeda21376f729e58bf76bc0653634cfdc017",
+   "version": 1,
+   "lock_time": 597164140,
+   "send_after_daa": 597155160,
+   "send_before_daa": 597162140,
+   "judged_at_daa": 597155160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 0 released"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 10 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 1
+      },
+      "value": 1560902000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20da62605250d7ddec251a1e10bf32635b441f5447acd2156ba3935009a67cfdb287",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 10,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "10 tokens of beneficiary"
+    },
+    {
+     "value": 1660652000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": false,
+    "mempool": false,
+    "block": false,
+    "refusal": {
+     "layer": "consensus",
+     "input": 0,
+     "rule": null,
+     "message": "transaction input #0 is not finalized"
+    }
+   },
+   "refusal_expected": {
+    "kind": "finality",
+    "input": 0,
+    "contract_line": null,
+    "node_message_contains": "is not finalized"
+   },
+   "twin": {
+    "accepted": true,
+    "judged_at_daa": 597164160,
+    "what": "judged after its lock time"
+   }
+  },
+  {
+   "name": "B3 more than vested",
+   "kind": "probe",
+   "what": "4 tokens at the cliff, where 3 have vested",
+   "expect": "refused",
+   "transaction_id": "dfe681d01a697b3f4eae5ec1d6dd345dc70cb50498758b4ab82e57bb6eba21dc",
+   "version": 1,
+   "lock_time": 597157140,
+   "send_after_daa": 597157160,
+   "send_before_daa": null,
+   "judged_at_daa": 597157160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 0 released"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 10 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 1
+      },
+      "value": 1560902000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20c5cb4ad9d82a717e22d73f94e2c65a1b27112757578e9dca9ebc9a5f85e62af287",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 4,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "4 tokens of beneficiary"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20fa73b47c29f839dd399dd633c56f7aff820646aa9944770c59e42e002db13e0f87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 6,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 6 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa2090f31b1f47c9636553974f4342b883d06cfaef9d5c600fe73950550afe6a120587",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 4
+     },
+     "what": "vesting coin, 4 released"
+    },
+    {
+     "value": 1460652000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": false,
+    "consensus": false,
+    "mempool": false,
+    "block": false,
+    "refusal": {
+     "layer": "scripts",
+     "input": 0,
+     "rule": null,
+     "message": "script ran, but verification failed"
+    }
+   },
+   "refusal_expected": {
+    "kind": "scripts",
+    "input": 0,
+    "contract_line": "require(released <= vested);",
+    "node_message_contains": "verification failed"
+   },
+   "twin": {
+    "accepted": true,
+    "judged_at_daa": 597157160,
+    "what": "3 tokens"
+   }
+  },
+  {
+   "name": "B4 to another key",
+   "kind": "probe",
+   "what": "3 tokens at the cliff, the claim owned by the payer's key",
+   "expect": "refused",
+   "transaction_id": "08e746aa14dfa8c89f6252c3d88400b5a924f0c45778eaacaee51f21c062218e",
+   "version": 1,
+   "lock_time": 597157140,
+   "send_after_daa": 597157160,
+   "send_before_daa": null,
+   "judged_at_daa": 597157160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 0 released"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 10 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 1
+      },
+      "value": 1560902000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20b37a1c5f8a7b781c6b3609da9f42269f8eadfce1cffea0c419362fad35f3aa5787",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 3,
+      "owner": "0ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "3 tokens of payer"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20cd4862d37bd1b5100fed06e5e1add7ddd4e548e44be914a75dfc5b77c0b9df8f87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 7,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 7 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20122c83d7667308c9e2e5bf0d5d5845ee0c480a0e4b86eaa9a886f7470d222b6b87",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 3
+     },
+     "what": "vesting coin, 3 released"
+    },
+    {
+     "value": 1460652000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": false,
+    "consensus": false,
+    "mempool": false,
+    "block": false,
+    "refusal": {
+     "layer": "scripts",
+     "input": 0,
+     "rule": null,
+     "message": "script ran, but verification failed"
+    }
+   },
+   "refusal_expected": {
+    "kind": "scripts",
+    "input": 0,
+    "contract_line": "require(claim.owner == beneficiary);",
+    "node_message_contains": "verification failed"
+   },
+   "twin": {
+    "accepted": true,
+    "judged_at_daa": 597157160,
+    "what": "the claim owned by the beneficiary"
+   }
+  },
+  {
+   "name": "R1 first release",
+   "kind": "step",
+   "what": "3 tokens at the cliff",
+   "expect": "accepted",
+   "transaction_id": "8b488d59036a9794788f779f8fcb674b56c08dc4299020b81c804b234836192b",
+   "version": 1,
+   "lock_time": 597157140,
+   "send_after_daa": 597157160,
+   "send_before_daa": null,
+   "judged_at_daa": 597157160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "f37999cfbe83958e20af083a869c145d59070506f15ee365b33701c7beb09c7d",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A1 vesting genesis",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa205a84c4a213a5365aa0f791173ae9d1dfcacf97928aae55bafce041475dbd7a5487",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 0 released"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 0,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 0
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa200d743c0273b52eac32ad1998e82d2e8a1e9093ab7fb9926fda754bffc2f7834a87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 10 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "5dc867c952b7018f12e13a10ada4d5a1b03c9e78de4efc2e1c69b28f866167c9",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "A2 fund the vault",
+       "output": 1
+      },
+      "value": 1560902000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa208a82a02e99ddbf9a4183aa4275c4df26130d2a29c139108424de0bc63d9b64fd87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 3,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "3 tokens of beneficiary"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20cd4862d37bd1b5100fed06e5e1add7ddd4e548e44be914a75dfc5b77c0b9df8f87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 7,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 7 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20122c83d7667308c9e2e5bf0d5d5845ee0c480a0e4b86eaa9a886f7470d222b6b87",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 3
+     },
+     "what": "vesting coin, 3 released"
+    },
+    {
+     "value": 1460652000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": true,
+    "mempool": true,
+    "block": true,
+    "refusal": null
+   },
+   "refusal_expected": null,
+   "twin": null
+  },
+  {
+   "name": "R2 second release",
+   "kind": "step",
+   "what": "3 more (6 vested)",
+   "expect": "accepted",
+   "transaction_id": "6ddbc3788d10b50846b2b9be7233d657ee48a6e54fcdf3522fa15a2a5892d9a1",
+   "version": 1,
+   "lock_time": 597160640,
+   "send_after_daa": 597160660,
+   "send_before_daa": null,
+   "judged_at_daa": 597160660,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "8b488d59036a9794788f779f8fcb674b56c08dc4299020b81c804b234836192b",
+     "index": 2,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R1 first release",
+       "output": 2
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa20122c83d7667308c9e2e5bf0d5d5845ee0c480a0e4b86eaa9a886f7470d222b6b87",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 3 released"
+     }
+    },
+    {
+     "transaction_id": "8b488d59036a9794788f779f8fcb674b56c08dc4299020b81c804b234836192b",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R1 first release",
+       "output": 1
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa20cd4862d37bd1b5100fed06e5e1add7ddd4e548e44be914a75dfc5b77c0b9df8f87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 7 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "8b488d59036a9794788f779f8fcb674b56c08dc4299020b81c804b234836192b",
+     "index": 3,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R1 first release",
+       "output": 3
+      },
+      "value": 1460652000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa208a82a02e99ddbf9a4183aa4275c4df26130d2a29c139108424de0bc63d9b64fd87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 3,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "3 tokens of beneficiary"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa203cbab45b148852d99e9fe1aaeace0fecc37c2a6ec3192cf9004fb2c832163c2b87",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 4,
+      "owner": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "owner_scheme": 4,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "the vault: 4 tokens owned by the vesting covenant"
+    },
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20eda3b7dd2adf9823b5e250d509a273cd85b02d772d6d89f2ed3b5ff93bf08c1587",
+     "covenant_binding": {
+      "authorizing_input": 0,
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5"
+     },
+     "role": "vesting",
+     "to": null,
+     "state": {
+      "contract": "TokenVesting",
+      "beneficiary": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "token_covid": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "token_template": "9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7",
+      "start": 597154140,
+      "cliff": 3000,
+      "duration": 10000,
+      "total": 10,
+      "released": 6
+     },
+     "what": "vesting coin, 6 released"
+    },
+    {
+     "value": 1360402000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": true,
+    "mempool": true,
+    "block": true,
+    "refusal": null
+   },
+   "refusal_expected": null,
+   "twin": null
+  },
+  {
+   "name": "R3 the rest",
+   "kind": "step",
+   "what": "the 4 left, at the end; the vesting coin ends",
+   "expect": "accepted",
+   "transaction_id": "61e4e01d117408a2b911689220020a4b3ccd72b2c39aeb9f288b8304caccdf2f",
+   "version": 1,
+   "lock_time": 597164140,
+   "send_after_daa": 597164160,
+   "send_before_daa": null,
+   "judged_at_daa": 597164160,
+   "subnetwork_id": "0000000000000000000000000000000000000000",
+   "gas": 0,
+   "payload": "",
+   "mass": 117651,
+   "inputs": [
+    {
+     "transaction_id": "6ddbc3788d10b50846b2b9be7233d657ee48a6e54fcdf3522fa15a2a5892d9a1",
+     "index": 2,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 40,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R2 second release",
+       "output": 2
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa20eda3b7dd2adf9823b5e250d509a273cd85b02d772d6d89f2ed3b5ff93bf08c1587",
+      "covenant_id": "8a70ebf504dbf6f79d6589650270626444780bd775507e3f59b6edcae5e750f5",
+      "what": "vesting coin, 6 released"
+     }
+    },
+    {
+     "transaction_id": "6ddbc3788d10b50846b2b9be7233d657ee48a6e54fcdf3522fa15a2a5892d9a1",
+     "index": 1,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 30,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R2 second release",
+       "output": 1
+      },
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa203cbab45b148852d99e9fe1aaeace0fecc37c2a6ec3192cf9004fb2c832163c2b87",
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210",
+      "what": "the vault: 4 tokens owned by the vesting covenant"
+     }
+    },
+    {
+     "transaction_id": "6ddbc3788d10b50846b2b9be7233d657ee48a6e54fcdf3522fa15a2a5892d9a1",
+     "index": 3,
+     "sequence": 0,
+     "sig_op_count": 0,
+     "compute_budget": 10,
+     "signature_script": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+     "spends": {
+      "from": {
+       "move": "R2 second release",
+       "output": 3
+      },
+      "value": 1360402000,
+      "script_public_key_version": 0,
+      "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+      "covenant_id": null,
+      "what": "the payer's change"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "value": 100000000,
+     "script_public_key_version": 0,
+     "script_public_key": "aa20c5cb4ad9d82a717e22d73f94e2c65a1b27112757578e9dca9ebc9a5f85e62af287",
+     "covenant_binding": {
+      "authorizing_input": 1,
+      "covenant_id": "7c3c19f1a35103371c59c89ccb9bea5be0ecd0f28c621a381542234b13152210"
+     },
+     "role": "token",
+     "to": null,
+     "state": {
+      "contract": "KCC20",
+      "amount": 4,
+      "owner": "ad1d02fb804c18df3434bb8e259694120512c64136d877390d9eb46707fddec2",
+      "owner_scheme": 0,
+      "borrow_scheme": 0,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000"
+     },
+     "what": "4 tokens of beneficiary"
+    },
+    {
+     "value": 1460152000,
+     "script_public_key_version": 0,
+     "script_public_key": "200ce472ae5d8993e7609ee4ef33b344f6b8499a1259374bdf528f82240985bf03ac",
+     "covenant_binding": null,
+     "role": "change",
+     "to": "payer",
+     "state": null,
+     "what": "the payer's change"
+    }
+   ],
+   "fee": 250000,
+   "fee_floor": 200000,
+   "masses": {
+    "compute_mass": 30000,
+    "transient_mass": 40000,
+    "calculated_storage_mass": 117651,
+    "fee_mass": 117651
+   },
+   "gate": {
+    "scripts": true,
+    "consensus": true,
+    "mempool": true,
+    "block": true,
+    "refusal": null
+   },
+   "refusal_expected": null,
+   "twin": null
+  }
+ ],
+ "totals": {
+  "fees_of_steps": 1250000,
+  "fees_of_probes": 1000000,
+  "tokens_to_beneficiary": 10,
+  "kas_locked_at_the_end": 300000000,
+  "change_at_the_end": 1460152000
+ }
+}

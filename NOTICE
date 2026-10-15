@@ -5,7 +5,8 @@ developers.
 It holds no file of the KCC20 reference and no file copied from its repository. Of the
 source text of the reference's contracts it quotes only what 1 lists: names, short
 fragments by which the checks name a place, and in the records of the runs the statements
-at which the token program stopped. What in it comes from the work of others:
+at which the token program stopped. The record of the testnet run carries the compiled
+script of one of its contracts, as 5 says. What in it comes from the work of others:
 
 1. What follows the KCC20 reference without being copied from it.
 
@@ -50,7 +51,18 @@ at which the token program stopped. What in it comes from the work of others:
    tools/mutation-run.mjs takes the idea of that repository's engine/tools/mutation-run.mjs
    (take one rule away, run the checks again) and is written anew for the source of a
    SilverScript contract. .github/workflows/checks.yml follows the form of that
-   repository's workflow and pins the same action at the same commit.
+   repository's workflow and pins the same actions at the same commits.
+
+   The programs of the testnet run follow that repository's programs of its own run on
+   testnet-10, and in part reuse their code: tests/testnet_chain.rs is written after its
+   builder engine/crates/checks/tests/launch_real.rs (the key files, the fee rule, the
+   chain file and its table, the self-test); testnet/vesting_send.py, its tests and
+   testnet/FORMAT.md are adapted from its launch/launch_send.py, tests and FORMAT.md (the
+   commands, the checks, the record, the exit codes), and its connection to a node follows
+   testnet/counter_live.py of kaspa-covenant-starter-lab,
+   https://github.com/0xlegacydag/kaspa-covenant-starter-lab, another earlier repository
+   of the same copyright holder (ISC License). requirements.in and requirements.txt are
+   that repository's.
 
 3. rusty-kaspa, https://github.com/kaspanet/rusty-kaspa.
 
@@ -70,6 +82,49 @@ at which the token program stopped. What in it comes from the work of others:
    Argent-lang developers), which kcc20-family uses; and packages from crates.io under
    their own licenses. Every version is pinned by Cargo.lock and engine-2.1.0/Cargo.lock.
 
+5. The compiled script of the KCC20 contract inside the recorded transactions of the
+   testnet run.
+
+   A Kaspa transaction that spends a coin of a contract reveals the contract's script. Of
+   the 9 transactions kept in
+
+     testnet/results/2026-10-15-testnet-10/chain.json
+
+   the 8 that spend a token coin (all but the first) therefore carry, in the signature
+   script of that input, the compiled script of the contract KCC20 of the KCC20 reference
+   (see 1) whole: after the state fields of the coin, byte for byte the bytecode in that
+   repository's fixtures/public-mint/artifact.json, revision c8a0871. The 4 of them that
+   were accepted were accepted by Kaspa testnet-10 nodes on 2026-10-15 and were public
+   there; the explorer's answers for those 4 in the explorer/ folder of the same record
+   carry it too. The 4 refused transactions are kept beside them. No other file of this
+   repository carries it, and no script of the other two contracts of the reference is
+   carried.
+
+   The reference states its license in its Cargo.toml (`license = "ISC"`, revision
+   c8a0871) and carries no separate license file or copyright line, so no copyright line
+   is reproduced here. The compiled script is reproduced on that declaration. It is not
+   covered by the LICENSE of this repository. The permission notice of the ISC License
+   reads:
+
+   Permission to use, copy, modify, and/or distribute this software for any purpose with
+   or without fee is hereby granted, provided that the above copyright notice and this
+   permission notice appear in all copies.
+
+   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
+   EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
+   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+6. The Kaspa Python SDK, package `kaspa`, https://github.com/kaspanet/kaspa-python-sdk,
+   release 2.1.0, is a dependency of the sender installed from PyPI and pinned with its
+   hashes in requirements.txt. It is not included here. It is distributed under the ISC
+   License, Copyright (c) 2022-2026 Kaspa developers. The calls by which the sender and
+   the fixture script build transaction objects follow the SDK's documented usage.
+
 Everything else was written for this study and is under the license in the file LICENSE:
 the contract, the crate token-vesting and its checks, the replay crate in engine-2.1.0/, the
-tools and the records of the runs in results/ (apart from what 1 says of them).
+tools, the records of the runs in results/ (apart from what 1 says of them), and the
+programs of the testnet run, their description and its record in testnet/ (apart from
+what 2 and 5 say of them).

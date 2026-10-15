@@ -1,0 +1,64 @@
+{
+  "chain_file": "chain.json",
+  "chain_sha256": "660d6db1ee4a45862435033f7751bd3c21c2283670f5e1e6426df8423d61c3cd",
+  "started_utc": "2026-10-15T08:43:29Z",
+  "ended_utc": "2026-10-15T09:08:47Z",
+  "exit_code": 0,
+  "last_words": "finished: 4 refused as expected; 5 sent",
+  "moves": [
+    {
+      "name": "A1 vesting genesis",
+      "kind": "step",
+      "transaction_id": "bf9bd3a6ad32e0b2dfc056978c5c41ec434d253e26601e98973fe64f9f028e35",
+      "outcome": "sent"
+    },
+    {
+      "name": "A2 fund the vault",
+      "kind": "step",
+      "transaction_id": "51e5cbb6a9278a122848327ee3943ecac89c1d7ff3bbc98de4a5bd4e7693a947",
+      "outcome": "sent"
+    },
+    {
+      "name": "B1 before the cliff",
+      "kind": "probe",
+      "transaction_id": "971a81e7802ac055cef34536d75780aebbc62948a1626f9af091a97537afcac6",
+      "outcome": "refused as expected"
+    },
+    {
+      "name": "B2 dated at the end",
+      "kind": "probe",
+      "transaction_id": "4a64fd8d81a56cff02876136a89965829008b00f0ef518d7c2bd4b1e061775e3",
+      "outcome": "refused as expected"
+    },
+    {
+      "name": "B3 more than vested",
+      "kind": "probe",
+      "transaction_id": "a99bc7dc2ec69a0c52c0403bb516c7f2607a819676f1d60a7f9914c77de83c31",
+      "outcome": "refused as expected"
+    },
+    {
+      "name": "B4 to another key",
+      "kind": "probe",
+      "transaction_id": "92d4870386ed4624da5793576c6ce0f44ee9d66800a627e0524feb35945f9a3a",
+      "outcome": "refused as expected"
+    },
+    {
+      "name": "R1 first release",
+      "kind": "step",
+      "transaction_id": "786260db9405b405687d73f0fc6ca22c032a52ce8aebd8c09f5e9acb55997e3e",
+      "outcome": "sent"
+    },
+    {
+      "name": "R2 second release",
+      "kind": "step",
+      "transaction_id": "3b5b025f4e6ee2e55fa56644ce2b47235df113a378033dbfd39b25ff97c9d8e0",
+      "outcome": "sent"
+    },
+    {
+      "name": "R3 the rest",
+      "kind": "step",
+      "transaction_id": "5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460",
+      "outcome": "sent"
+    }
+  ]
+}

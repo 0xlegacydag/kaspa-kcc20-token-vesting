@@ -1,0 +1,45 @@
+{
+  "format": "vesting-launch-request/1",
+  "network": "testnet-10",
+  "read_at_utc": "2026-10-15T08:41:44Z",
+  "node": "wss://muon-10.kaspa.blue/kaspa/testnet-10/wrpc/borsh",
+  "node_version": "2.1.0",
+  "virtual_daa_score": 597201388,
+  "coin_value": 100000000,
+  "feerate": 200,
+  "fee_cap_total": 800000000,
+  "schedule": {
+    "start": 597207388,
+    "cliff": 3000,
+    "duration": 10000,
+    "total": 10
+  },
+  "funding": {
+    "transaction_id": "c5f46d16f2df63f1c86584de96942ae6ab9a0210880a4805d5040ed6fc72bcde",
+    "index": 2,
+    "value": 1661402000,
+    "script_public_key_version": 0,
+    "script_public_key": "20ca0e444ac258f8d1fab99d85d29713dfdc21ee24c4ac7a31c4ee47acac7b6b64ac",
+    "block_daa_score": 593874770
+  },
+  "token": {
+    "covenant_id": "0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a",
+    "coin": {
+      "transaction_id": "78e23990321b7decd966c14887b59806310b6faed043a3cbe44de2489c989da5",
+      "index": 1,
+      "value": 100000000,
+      "script_public_key_version": 0,
+      "script_public_key": "aa20a3d2f24f629f0bac51f09babc6164c3a3b2a132489f77fb268c11ec6ccf081e587",
+      "block_daa_score": 593874642
+    },
+    "state": {
+      "contract": "KCC20",
+      "amount": 10,
+      "borrow_guard": "0000000000000000000000000000000000000000000000000000000000000000",
+      "borrow_scheme": 0,
+      "extension_commitment": "0000000000000000000000000000000000000000000000000000000000000000",
+      "owner": "41787492bc8473d7411c706362a84cc2debaf38e19fbae262100b3c4bc89a622",
+      "owner_scheme": 0
+    }
+  }
+}

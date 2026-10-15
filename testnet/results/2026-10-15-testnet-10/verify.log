@@ -1,0 +1,41 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.03s
+     Running tests\testnet_verify.rs (target\debug\deps\testnet_verify-293f87f8f9f8fe3a.exe)
+verify chain.json
+OK       format is vesting-launch-chain/1
+OK       token.template_hash is the template hash of the pinned KCC20 program
+OK       token.coin script is the KCC20 script of token.state, owned by Alice's key
+OK       parties.payer script is the pay-to-public-key script of its key
+OK       parties.alice script is the pay-to-public-key script of its key
+OK       parties.beneficiary script is the pay-to-public-key script of its key
+OK       the chain has moves
+OK       vesting_covenant_id is derived from A1 vesting genesis by the consensus rule
+OK       A1 vesting genesis output 0 (vesting)
+OK       A1 vesting genesis output 1 (change)
+OK       A2 fund the vault output 0 (token)
+OK       A2 fund the vault output 1 (change)
+OK       B1 before the cliff output 0 (token)
+OK       B1 before the cliff output 1 (token)
+OK       B1 before the cliff output 2 (vesting)
+OK       B1 before the cliff output 3 (change)
+OK       B2 dated at the end output 0 (token)
+OK       B2 dated at the end output 1 (change)
+OK       B3 more than vested output 0 (token)
+OK       B3 more than vested output 1 (token)
+OK       B3 more than vested output 2 (vesting)
+OK       B3 more than vested output 3 (change)
+OK       B4 to another key output 0 (token)
+OK       B4 to another key output 1 (token)
+OK       B4 to another key output 2 (vesting)
+OK       B4 to another key output 3 (change)
+OK       R1 first release output 0 (token)
+OK       R1 first release output 1 (token)
+OK       R1 first release output 2 (vesting)
+OK       R1 first release output 3 (change)
+OK       R2 second release output 0 (token)
+OK       R2 second release output 1 (token)
+OK       R2 second release output 2 (vesting)
+OK       R2 second release output 3 (change)
+OK       R3 the rest output 0 (token)
+OK       R3 the rest output 1 (change)
+36 checks, 0 mismatches
+report written to verify.json (19 outputs)

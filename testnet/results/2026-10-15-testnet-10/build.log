@@ -1,0 +1,16 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.39s
+     Running tests\testnet_chain.rs (target\debug\deps\testnet_chain-021302e00a02e831.exe)
+B1 before the cliff: refused as intended (scripts input 0: failed to verify the signature script: Unsatisfied lock time: locktime requirement not satisfied -- locktime is greater than the transaction locktime: 597210388 > 597208388; line `require(tx.daa >= start + cliff);`); twin accepted at 597210408
+B2 dated at the end: refused as intended (consensus input 0: transaction input #0 is not finalized); twin accepted at 597217408
+B3 more than vested: refused as intended (scripts input 0: failed to verify the signature script: script ran, but verification failed; line `require(claim <= vested - released);`); twin accepted at 597210408
+B4 to another key: refused as intended (scripts input 0: failed to verify the signature script: script ran, but verification failed; line `validateOutputStateWithInputTemplate( OpCovOutputIdx(token_covid, 0), KCC20State { kcc20_template: vault.kcc20_template, amount: claim, owner: beneficiary, owner_scheme: OWNER_P2PK_SCHNORR, borrow_scheme: BORROW_DISABLED, borrow_guard: byte[32](0x0000000000000000000000000000000000000000000000000000000000000000), extension_commitment: vault.extension_commitment }, token_input, TOKEN_PREFIX_LEN, TOKEN_SUFFIX_LEN, token_template );`); twin accepted at 597210408
+  A1 vesting genesis: accepted at 597201388, id bf9bd3a6ad32e0b2dfc056978c5c41ec434d253e26601e98973fe64f9f028e35
+  A2 fund the vault: accepted at 597201388, id 51e5cbb6a9278a122848327ee3943ecac89c1d7ff3bbc98de4a5bd4e7693a947
+  B1 before the cliff: refused at 597208408 as the file says (scripts input 0: failed to verify the signature script: Unsatisfied lock time: locktime requirement not satisfied -- locktime is greater than the transaction locktime: 597210388 > 597208388), id 971a81e7802ac055cef34536d75780aebbc62948a1626f9af091a97537afcac6
+  B2 dated at the end: refused at 597208408 as the file says (consensus input 0: transaction input #0 is not finalized), id 4a64fd8d81a56cff02876136a89965829008b00f0ef518d7c2bd4b1e061775e3
+  B3 more than vested: refused at 597210408 as the file says (scripts input 0: failed to verify the signature script: script ran, but verification failed), id a99bc7dc2ec69a0c52c0403bb516c7f2607a819676f1d60a7f9914c77de83c31
+  B4 to another key: refused at 597210408 as the file says (scripts input 0: failed to verify the signature script: script ran, but verification failed), id 92d4870386ed4624da5793576c6ce0f44ee9d66800a627e0524feb35945f9a3a
+  R1 first release: accepted at 597210408, id 786260db9405b405687d73f0fc6ca22c032a52ce8aebd8c09f5e9acb55997e3e
+  R2 second release: accepted at 597213908, id 3b5b025f4e6ee2e55fa56644ce2b47235df113a378033dbfd39b25ff97c9d8e0
+  R3 the rest: accepted at 597217408, id 5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460
+chain written to chain.json and read back clean: 9 moves; fees of the steps 0.62222400 KAS, of the probes 0.69090400 KAS
