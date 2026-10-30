@@ -255,8 +255,8 @@ every repository, named by the environment variables `VESTING_PAYER_KEY_FILE`,
   text is `verification failed` (a node says "script ran, but verification failed"), except
   where the refusing line is a lock-time check (B1, `require(tx.daa >= start + cliff)`):
   then it is `Unsatisfied lock time`; for `"finality"` it is `is not finalized` (a node says
-  "transaction input #0 is not finalized"). The sender classifies a refusal only by the
-  probe's own text. For a probe refused by the scripts, the scripts of its other inputs
+  "transaction input #0 is not finalized"). The sender takes no other text, and classifies a
+  refusal by the probe's own text and, where a node names an input, by `input`. For a probe refused by the scripts, the scripts of its other inputs
   pass, so that a node, which checks the inputs in no fixed order, can report no other
   refusal. `gate.refusal` is then `{ "layer": "scripts" | "consensus", "input": 0,
   "rule": null, "message": "<text>" }` and agrees with it.
@@ -273,6 +273,30 @@ holds at most 20 KAS; `coin_value` is exactly 1 KAS; the fees of all moves are a
 budget of at most 1,000 per input; no empty signature script; every lock time either 0 or
 between `schedule.start` and 500,000,000,000; `schedule.total` 10 and the vault exactly
 `schedule.total` tokens.
+
+### The verifier's report: `vesting-verify-report/2`
+
+The verifier (`tests/testnet_verify.rs`) writes it when every check passed, and the sender
+takes it with `--verify-report`:
+
+```
+{
+  "chain_sha256": "<64 hex>",
+  "format": "vesting-verify-report/2",
+  "mismatches": 0,
+  "outputs": [
+    { "move": "A1 vesting genesis", "ok": true, "output": 0, "role": "vesting",
+      "script_public_key": "<hex>" }
+  ],
+  "vesting_covenant_id": "<64 hex>"
+}
+```
+
+- `chain_sha256` is the SHA-256 of the bytes of the chain file the verifier read. The sender
+  compares it with the file it reads: a report is about one file.
+- `outputs` lists every vesting and token output of the chain whose lock was computed again.
+- The earlier format, `vesting-verify-report/1`, has no `chain_sha256`. `check` takes it and
+  prints that it is NOT BOUND to the file; `send` does not take it.
 
 ### What a transaction id does and does not cover
 

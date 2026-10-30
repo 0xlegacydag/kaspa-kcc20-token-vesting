@@ -1,22 +1,30 @@
 //! Checks a chain file of the vesting run (`vesting-launch-chain/1`) from the file alone.
 //!
-//! Runs only when `VESTING_VERIFY_CHAIN` names a chain file. For every output of every move
-//! that carries a state, the lock is computed again from that state: a TokenVesting output
-//! by compiling the contract for its state (`Compiled::new`), a KCC20 output with the pinned
+//! When `VESTING_VERIFY_CHAIN` names a chain file: for every output of every move that
+//! carries a state, the lock is computed again from that state: a TokenVesting output by
+//! compiling the contract for its state (`Compiled::new`), a KCC20 output with the pinned
 //! KCC20 program of `kcc20-family`. The covenant id of the vesting coin is derived again from
 //! A1 by the consensus rule, the token coin's script from its stated state, and the template
 //! hash of the token program from the pinned family. One line per check, OK or MISMATCH; any
-//! mismatch fails the run.
+//! mismatch fails the run. A move without outputs is a mismatch.
 //!
 //! When `VESTING_VERIFY_REPORT` names a file that does not exist yet, and every check
-//! passed, a report (`vesting-verify-report/1`) is written there: every vesting and token
-//! output whose lock was computed again. On a mismatch nothing is written.
+//! passed, a report (`vesting-verify-report/2`) is written there: the SHA-256 of the chain
+//! file and every vesting and token output whose lock was computed again. On a mismatch
+//! nothing is written.
+//!
+//! Without `VESTING_VERIFY_CHAIN`, the self-test: the chain file of the run of 2026-10-15
+//! passes, and the same file changed in memory, one thing at a time, does not.
+//!
+//! This program judges locks, not transactions: it runs no script and reads no signature or
+//! compute budget. The builder judges those, also on a file that exists
+//! (`VESTING_JUDGE_CHAIN`, `tests/testnet_chain.rs`).
 //!
 //! educational / unaudited / not for real funds
 
 use std::fs;
 use std::io::Write as _;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use kaspa_consensus_core::hashing::covenant_id::covenant_id;
 use kaspa_consensus_core::tx::{ScriptPublicKey, TransactionOutpoint, TransactionOutput};
@@ -24,16 +32,21 @@ use kaspa_hashes::Hash;
 use kcc20_family::shapes::pay_to_public_key_script;
 use kcc20_family::{Contract, Family, Kcc20State};
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use token_vesting::contract::{Compiled, VestingState};
 
 const CHAIN_ENV: &str = "VESTING_VERIFY_CHAIN";
 const CHAIN_FORMAT: &str = "vesting-launch-chain/1";
 /// Environment variable: where to write the report for the sender (must not exist yet).
 const REPORT_ENV: &str = "VESTING_VERIFY_REPORT";
-const REPORT_FORMAT: &str = "vesting-verify-report/1";
+const REPORT_FORMAT: &str = "vesting-verify-report/2";
 
 fn hex(bytes: &[u8]) -> String {
     faster_hex::hex_string(bytes)
+}
+
+fn sha256_hex(bytes: &[u8]) -> String {
+    hex(&Sha256::digest(bytes))
 }
 
 fn unhex(text: &str) -> Option<Vec<u8>> {
@@ -245,13 +258,11 @@ fn verify(chain: &Value) -> Report {
     // Every output of every move.
     for entry in &moves {
         let name = entry["name"].as_str().unwrap_or("?");
-        for (index, output) in entry["outputs"]
-            .as_array()
-            .cloned()
-            .unwrap_or_default()
-            .iter()
-            .enumerate()
-        {
+        let outputs = entry["outputs"].as_array().cloned().unwrap_or_default();
+        if outputs.is_empty() {
+            report.check(format!("{name} has outputs"), false);
+        }
+        for (index, output) in outputs.iter().enumerate() {
             let role = output["role"].as_str().unwrap_or("?");
             let what = format!("{name} output {index} ({role})");
             let outcome = (|| -> Result<bool, String> {
@@ -309,9 +320,106 @@ fn verify(chain: &Value) -> Report {
     report
 }
 
+/// The self-test: the chain file of the run passes, and each change to it is caught at the
+/// line named. Nothing is written.
+fn self_test() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("testnet/results/2026-10-15-testnet-10/chain.json");
+    let text =
+        fs::read_to_string(&path).unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+    let chain: Value = serde_json::from_str(&text).expect("the chain file of the run is JSON");
+    let clean = verify(&chain);
+    assert_eq!(clean.mismatches, 0, "{:#?}", clean.lines);
+    println!(
+        "the chain file of the run: {} checks, 0 mismatches",
+        clean.lines.len()
+    );
+    assert_eq!(
+        sha256_hex(b"abc"),
+        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    );
+    type Change = fn(&mut Value);
+    let changes: [(&str, &str, Change); 13] = [
+        ("the format", "format is", |chain| {
+            chain["format"] = json!("vesting-launch-chain/0");
+        }),
+        ("the template hash", "token.template_hash", |chain| {
+            chain["token"]["template_hash"] = json!("11".repeat(32));
+        }),
+        (
+            "the vesting covenant id",
+            "vesting_covenant_id is derived",
+            |chain| chain["vesting_covenant_id"] = json!("11".repeat(32)),
+        ),
+        (
+            "the token's covenant id",
+            "R1 first release output 0 (token)",
+            |chain| chain["token"]["covenant_id"] = json!("11".repeat(32)),
+        ),
+        ("a party's key", "parties.payer script", |chain| {
+            chain["parties"]["payer"]["x_only_public_key"] = json!("11".repeat(32));
+        }),
+        (
+            "what the vesting coin has released",
+            "R1 first release output 2 (vesting)",
+            |chain| chain["moves"][6]["outputs"][2]["state"]["released"] = json!(4),
+        ),
+        (
+            "the schedule of a vesting coin",
+            "A1 vesting genesis output 0 (vesting)",
+            |chain| chain["moves"][0]["outputs"][0]["state"]["cliff"] = json!(1),
+        ),
+        (
+            "the tokens of a claim",
+            "R1 first release output 0 (token)",
+            |chain| chain["moves"][6]["outputs"][0]["state"]["amount"] = json!(9),
+        ),
+        (
+            "the owner of a claim",
+            "R1 first release output 0 (token)",
+            |chain| chain["moves"][6]["outputs"][0]["state"]["owner"] = json!("11".repeat(32)),
+        ),
+        (
+            "the script of the change",
+            "R3 the rest output 1 (change)",
+            |chain| chain["moves"][8]["outputs"][1]["script_public_key"] = json!("00"),
+        ),
+        ("a role", "an unknown role", |chain| {
+            chain["moves"][0]["outputs"][1]["role"] = json!("other");
+        }),
+        (
+            "a move's outputs taken away",
+            "B3 more than vested has outputs",
+            |chain| {
+                chain["moves"][4]
+                    .as_object_mut()
+                    .expect("a move")
+                    .remove("outputs");
+            },
+        ),
+        (
+            "a move's outputs emptied",
+            "R3 the rest has outputs",
+            |chain| chain["moves"][8]["outputs"] = json!([]),
+        ),
+    ];
+    for (what, line, change) in changes {
+        let mut copy = chain.clone();
+        change(&mut copy);
+        let report = verify(&copy);
+        let caught = report
+            .lines
+            .iter()
+            .find(|found| found.starts_with("MISMATCH") && found.contains(line))
+            .unwrap_or_else(|| panic!("{what}: no mismatch at `{line}`: {:#?}", report.lines));
+        println!("changed {what}: {caught}");
+    }
+    println!("self-test: as intended");
+}
+
 fn main() {
     let Some(path) = std::env::var_os(CHAIN_ENV).filter(|value| !value.is_empty()) else {
-        println!("{CHAIN_ENV} is not set: nothing to verify");
+        self_test();
         return;
     };
     // The report file for the sender: it must not exist yet.
@@ -325,9 +433,9 @@ fn main() {
             report_path.display()
         );
     }
-    let text = fs::read_to_string(&path)
-        .unwrap_or_else(|error| panic!("{}: {error}", path.to_string_lossy()));
-    let chain: Value = serde_json::from_str(&text)
+    let bytes =
+        fs::read(&path).unwrap_or_else(|error| panic!("{}: {error}", path.to_string_lossy()));
+    let chain: Value = serde_json::from_slice(&bytes)
         .unwrap_or_else(|error| panic!("{}: not JSON: {error}", path.to_string_lossy()));
     let report = verify(&chain);
     println!("verify {}", path.to_string_lossy());
@@ -345,6 +453,7 @@ fn main() {
         assert!(report.outputs.iter().all(|output| output["ok"] == true));
         let document = json!({
             "format": REPORT_FORMAT,
+            "chain_sha256": sha256_hex(&bytes),
             "vesting_covenant_id": chain["vesting_covenant_id"],
             "mismatches": 0,
             "outputs": report.outputs,

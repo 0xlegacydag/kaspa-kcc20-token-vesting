@@ -8,7 +8,7 @@ between the builder and this program, and README.md for the order of a run.
     python vesting_send.py prepare --payer-address kaspatest:... --funding TXID:INDEX \\
         --token-coin TXID:INDEX --token-state FILE --harness DIR --out request.json
     python vesting_send.py check chain.json --party payer=kaspatest:... --party alice=... --party beneficiary=... --harness DIR
-    python vesting_send.py send chain.json --party ... --harness DIR --record DIR --yes-send-to-testnet-10
+    python vesting_send.py send chain.json --party ... --harness DIR --verify-report FILE --record DIR --yes-send-to-testnet-10
     python vesting_send.py status chain.json --party ...
 
 `prepare`, `check --online` and `status` only read the network. `send` is the
@@ -21,13 +21,14 @@ The moves of the file are sent in their order. Before each one the program
 waits until the node's virtual DAA score is above the move's `send_after_daa`.
 A step must be accepted; a probe must be refused.
 
-Exit codes: 0 finished; 1 usage or check failure; 2 a step was refused;
-3 no answer to a submission; 4 submitted but not seen; 5 a forbidden move was
-accepted; 6 the picture on chain does not fit the file; 7 the node could not
-be asked or read after the checks had passed (nothing was submitted in that
-move); 8 the record could not be written (nothing more was submitted);
-9 the DAA score did not reach a move's time within the allowed wait;
-130 interrupted from the keyboard.
+Exit codes: 0 finished, every probe seen refused as expected; 1 usage or check
+failure; 2 a step was refused; 3 no answer to a submission; 4 submitted but not
+seen; 5 a forbidden move was accepted, or may be with a node; 6 the picture on
+chain does not fit the file; 7 the node could not be asked or read after the
+checks had passed (nothing was submitted in that move); 8 the record could not
+be written (nothing more was submitted); 9 the DAA score did not reach a move's
+time within the allowed wait; 10 the run went through, but a probe was refused
+for another reason or not sent; 130 interrupted from the keyboard.
 """
 
 import argparse
@@ -38,6 +39,7 @@ import importlib.util
 import json
 import math
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -132,8 +134,6 @@ OUTPUTS = {
     "R3 the rest": (("claim", 4, "beneficiary"), ("change",)),
 }
 END_CLAIMS = [3, 3, 4]  # the only covenant coins of the chain left unspent: the beneficiary's three token coins
-# The words FORMAT.md names for each kind of refusal. Only for a reader: `send` takes the words of
-# each probe's own refusal_expected.node_message_contains, and `check` accepts any non-empty text.
 # What each probe claims: (tokens, the party whose key owns the claim).
 CLAIMS = {
     "B1 before the cliff": (1, "beneficiary"),
@@ -143,13 +143,19 @@ CLAIMS = {
 }
 # `released` of the vesting coin a step makes; None: the step makes no vesting coin (the coin ends).
 RELEASED = {"A1 vesting genesis": 0, "A2 fund the vault": 0, "R1 first release": 3, "R2 second release": 6, "R3 the rest": None}
-REFUSAL_TEXT = {"scripts": "verification failed", "finality": "is not finalized"}
+# The words FORMAT.md names for each kind of refusal: `check` takes no others, so that a word like
+# "a" cannot make any refusal read as the expected one.
+REFUSAL_WORDS = {"scripts": ("verification failed", "Unsatisfied lock time"), "finality": ("is not finalized",)}
 REFUSAL_LAYER = {"scripts": "scripts", "finality": "consensus"}
 
 OWNER_KEY = 0  # KCC20 owner scheme: the owner is an x-only key (Schnorr)
 OWNER_COVENANT = 4  # KCC20 owner scheme: the owner is a covenant id (here the vesting covenant)
 
 REFUSAL_MARK = "Rejected transaction"  # how a node's own refusal begins
+INPUT_NAMED = re.compile(r"input #(\d+)")  # "transaction input #0 is not finalized"
+# rusty-kaspa v2.1.0, mining/errors/src/mempool.rs: "output {0} already spent by transaction {1} in the mempool".
+# Any other "already" (`allowOrphan` is false, so no orphan's words come back) counts as a forbidden move that may be with a node.
+SPENDER_NAMED = re.compile(r"already spent by transaction ([0-9a-f]{64})")
 
 EXIT_OK = 0
 EXIT_CHECK = 1
@@ -161,6 +167,7 @@ EXIT_INCONSISTENT = 6
 EXIT_NODE = 7
 EXIT_RECORD = 8
 EXIT_TIMING = 9
+EXIT_PROBES = 10
 
 
 class Timing:
@@ -757,10 +764,12 @@ def check_moves(data: dict) -> list:
         expected = move["refusal_expected"]
         if expected["kind"] != refusal:
             problems.append(f"{where}: refusal_expected.kind is {expected['kind']!r}; this probe is refused by {refusal!r}")
-        # The words a node's refusal must contain are the file's own, whatever they are (FORMAT.md names
-        # typical ones per kind, but a contract line may fail with other words); only an empty text is refused.
-        if not expected["node_message_contains"].strip():
-            problems.append(f"{where}: refusal_expected.node_message_contains is empty: any refusal would read as the expected one")
+        # A probe's refusal is read by these words: only those FORMAT.md names for its kind.
+        if expected["node_message_contains"] not in REFUSAL_WORDS.get(expected["kind"], ()):
+            problems.append(
+                f"{where}: refusal_expected.node_message_contains is {expected['node_message_contains']!r}; "
+                f"a refusal of the kind {expected['kind']!r} reads {REFUSAL_WORDS.get(expected['kind'], ())}"
+            )
         gate_refusal = move["gate"]["refusal"]
         if gate_refusal is not None and expected["kind"] in REFUSAL_LAYER:
             layer = REFUSAL_LAYER[expected["kind"]]
@@ -1238,12 +1247,13 @@ def check_states(data: dict) -> list:
     return problems
 
 
-VERIFY_FORMAT = "vesting-verify-report/1"
+VERIFY_FORMAT = "vesting-verify-report/2"
+VERIFY_FORMAT_UNBOUND = "vesting-verify-report/1"  # the verifier's earlier format: it names no chain file
 REPORT_SHAPE = {"format": "text", "vesting_covenant_id": "hex32", "mismatches": "u64", "outputs": "list"}
 REPORT_OUTPUT_SHAPE = {"move": "text", "output": "u32", "role": "text", "script_public_key": "hex", "ok": "bool"}
 
 
-def check_verify_report(data: dict, path: str | None) -> tuple:
+def check_verify_report(data: dict, path: str | None, chain_sha256: str | None, for_send: bool) -> tuple:
     """l. The TokenVesting locks, as the verifier's report confirms them. Returns (problems, what was done, whether checked)."""
     if path is None:
         return [], "NOT CHECKED: no --verify-report given; the TokenVesting locks are not recomputed by this program", False
@@ -1254,8 +1264,17 @@ def check_verify_report(data: dict, path: str | None) -> tuple:
     problems: list = []
     if not shape(problems, "verify report", report, REPORT_SHAPE):
         return problems, "NOT CHECKED", False
-    if report["format"] != VERIFY_FORMAT:
+    unbound = report["format"] == VERIFY_FORMAT_UNBOUND
+    if unbound:
+        if for_send:
+            problems.append(
+                f"verify report: its format {VERIFY_FORMAT_UNBOUND!r} names no chain file, so nothing shows it is about this one; "
+                f"`send` takes {VERIFY_FORMAT!r}: run the verifier on this file again"
+            )
+    elif report["format"] != VERIFY_FORMAT:
         problems.append(f"verify report: the format is {report['format']!r}, not {VERIFY_FORMAT!r}")
+    elif report.get("chain_sha256") != chain_sha256:
+        problems.append(f"verify report: it is about the chain file with SHA-256 {report.get('chain_sha256')}, this file's is {chain_sha256}")
     if report["mismatches"] != 0:
         problems.append(f"verify report: it counts {report['mismatches']} mismatches")
     if report["vesting_covenant_id"] != data["vesting_covenant_id"]:
@@ -1285,7 +1304,10 @@ def check_verify_report(data: dict, path: str | None) -> tuple:
     for name, number in vesting:
         if (name, number) not in listed:
             problems.append(f"verify report: output {number} of {name!r}, a vesting coin, is not in the report")
-    return problems, f"the verifier's report (SHA-256 {sha256}) confirms the {len(vesting)} TokenVesting locks", True
+    if problems:
+        return problems, f"the verifier's report (SHA-256 {sha256}) does not fit this file", True
+    bound = "NOT BOUND to this file: its format names no chain file, and `send` does not take it" if unbound else "bound to this file by its SHA-256"
+    return problems, f"the verifier's report (SHA-256 {sha256}) confirms the {len(vesting)} TokenVesting locks; {bound}", True
 
 
 HARNESSES: dict = {}  # folder -> the loaded module: one load per run, so nothing is compiled twice
@@ -1438,12 +1460,13 @@ def totals_notes(data: dict) -> list:
     ]
 
 
-def check_offline(data, addresses: dict, harness_folder: str | None, report: str | None = None) -> tuple:
+def check_offline(data, addresses: dict, harness_folder: str | None, report: str | None = None,
+                  chain_sha256: str | None = None, for_send: bool = False) -> tuple:
     """All offline checks. Prints one line per check and every refusal.
 
-    Returns (the refusals, whether the KCC20 locks were recomputed). A file
-    that lacks a field, or has one of the wrong kind, is refused on that
-    alone: the other checks are not run on it.
+    Returns (the refusals, whether the KCC20 locks were recomputed, whether the
+    TokenVesting locks were checked). A file that lacks a field, or has one of
+    the wrong kind, is refused on that alone: the other checks are not run on it.
     """
     problems = check_shape(data)
     if problems:
@@ -1452,7 +1475,7 @@ def check_offline(data, addresses: dict, harness_folder: str | None, report: str
             say(f"REFUSED  {problem}")
         return problems, False, False
     locks, locks_done, locks_checked = check_locks(data, harness_folder)
-    verified, verified_done, verified_checked = check_verify_report(data, report)
+    verified, verified_done, verified_checked = check_verify_report(data, report, chain_sha256, for_send)
     sections = [
         ("a  format, network, limits, launch checks, gates", check_basics(data), None, True),
         ("b  the moves, lock times, windows, refusals", check_moves(data), None, True),
@@ -1947,6 +1970,21 @@ def node_words(answer: str, txid: str) -> str:
     return answer.split(f"{REFUSAL_MARK} {txid}", 1)[-1]
 
 
+def why_not_as_expected(words: str, expected: dict) -> str | None:
+    """Why a probe's refusal is not the one its file expects; None when it is.
+
+    The node's words are compared with the file's, and the input it names, when
+    it names one, with the file's input. Most of its refusals by a script name no
+    input: there the words are all a node gives.
+    """
+    if expected["node_message_contains"] not in words:
+        return f"the answer does not contain {expected['node_message_contains']!r}"
+    named = INPUT_NAMED.search(words)
+    if named and int(named.group(1)) != expected["input"]:
+        return f"the answer names input {named.group(1)}, the file expects input {expected['input']}"
+    return None
+
+
 async def hand_over(client, built: Transaction, txid: str) -> tuple:
     """Return (accepted, the id the node returns or the node's refusal).
 
@@ -2046,6 +2084,42 @@ WATCHED = (
 )
 STEP_UNKNOWN = "step handed over, outcome unknown"
 PROBE_UNKNOWN = "probe handed over, outcome unknown"
+PROBE_COIN_TAKEN = "probe coin spent by another transaction"
+
+
+def moves_sha256(data: dict) -> str:
+    """The SHA-256 of every field of every move. A new build of one request changes the file's build time, not this."""
+    text = json.dumps(data["moves"], sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def another_chain_in_the_record(folder: Path, data: dict, chain_sha256: str) -> str | None:
+    """Why the earlier runs in `folder` are not runs of this chain; None when they are, or when there are none.
+
+    What a run takes over from a record is told by transaction ids, and an id
+    does not cover the signature scripts, the mass field or the compute budgets:
+    so every earlier run must have had these very moves. A run recorded before
+    `moves_sha256` existed is compared by the SHA-256 of its file.
+    """
+    moves = moves_sha256(data)
+    if not folder.is_dir():
+        return None
+    for path in sorted(folder.glob("run-*.jsonl")):
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        if not lines:
+            continue
+        try:
+            first = json.loads(lines[0])
+        except ValueError:
+            first = None
+        if not isinstance(first, dict) or first.get("what") != "run started":
+            return f"{path.name} does not begin with its \"run started\" line, so nothing shows which chain it ran"
+        if "moves_sha256" in first:
+            if first["moves_sha256"] != moves:
+                return f"{path.name} ran the file {first.get('chain_file')!r} (SHA-256 {first.get('chain_sha256')}), whose moves differ from this file's"
+        elif first.get("chain_sha256") != chain_sha256:
+            return f"{path.name} ran the file {first.get('chain_file')!r} (SHA-256 {first.get('chain_sha256')}), and it names no fingerprint of its moves"
+    return None
 
 
 def earlier_events(folder: Path) -> dict:
@@ -2076,7 +2150,7 @@ def earlier_events(folder: Path) -> dict:
                 found[STEP_UNKNOWN].discard(txid)
             elif what in ("probe submitting", "probe interrupted"):
                 found[PROBE_UNKNOWN].add(txid)
-            elif isinstance(what, str) and what.startswith("probe refused"):
+            elif isinstance(what, str) and what.startswith("probe refused") or what == PROBE_COIN_TAKEN:
                 found[PROBE_UNKNOWN].discard(txid)
     return found
 
@@ -2122,6 +2196,13 @@ class Run:
         """The move the run ended at, for the summary, unless it has an outcome already."""
         if self.current is not None and all(item["name"] != self.current["name"] for item in self.outcomes):
             self.outcome(self.current, outcome)
+
+    def probes_not_shown(self) -> list:
+        """The probes that neither this run nor an earlier one with this record saw refused as expected."""
+        return [
+            item for item in self.outcomes
+            if item["kind"] == "probe" and item["outcome"] != "refused as expected" and item["transaction_id"] not in self.earlier["probe refused"]
+        ]
 
 
 async def wait_and_check(run: Run, move: dict, title: str, step: bool):
@@ -2256,7 +2337,11 @@ async def send_step(run: Run, position: int) -> str:
         if not accepted:
             say(f"{title}: REFUSED by the node")
             say(f"reason  : {answer}")
-            if "already" in node_words(answer, txid).lower():
+            words = node_words(answer, txid)
+            named = SPENDER_NAMED.search(words)
+            if named and named.group(1) != txid:
+                say(f"hint    : the node names another transaction, {named.group(1)}, as the holder of a coin of this step; run `status`")
+            elif "already" in words.lower():
                 say("hint    : the node seems to have this transaction already; run `status`, and `send` again once its outputs are visible")
             note(record, "step refused", step=name, transaction_id=txid, answer=answer, daa_score=score)
             raise Stop(
@@ -2372,22 +2457,42 @@ async def send_probe(run: Run, position: int) -> str:
         raise Stop(EXIT_FORBIDDEN_ACCEPTED, f"STOP at {title}: FORBIDDEN MOVE ACCEPTED by the node as {answer}. Nothing more was submitted in this run, and no later run with this record starts.")
     words = node_words(answer, txid)
     if "already" in words.lower():
-        # Not a refusal of the move: the node holds this transaction, or another one that spends the same coin.
+        # Not a refusal of the move: a node looks for double spends before it runs a script. It names the
+        # transaction that holds the coin, when that is another one.
+        named = SPENDER_NAMED.search(words)
+        spender = named.group(1) if named else None
+        probes = {move["transaction_id"]: move["name"] for move in data["moves"] if move["kind"] == "probe"}
+        if spender is not None and spender not in probes:
+            steps = {step["transaction_id"]: step["name"] for step in steps_of(data)}
+            who = f"the step {steps[spender]!r} of this file" if spender in steps else "a transaction this file does not know"
+            say(f"{title}: the node names {who}, {spender}, as the holder of a coin it spends")
+            say(f"reason  : {answer}")
+            note(record, PROBE_COIN_TAKEN, probe=name, transaction_id=txid, answer=answer, spender=spender, daa_score=score)
+            raise Stop(
+                EXIT_INCONSISTENT,
+                f"STOP at {title}: the node did not take it and names {who}, {spender}, as the holder of a coin it spends. "
+                "Nothing is known about other nodes. The chain is not what the file expects: read that transaction. Nothing more "
+                "was submitted. Look with `status` and `check --online`; a later `send` with the same --record folder starts by "
+                "that check.",
+            )
+        # This probe, or another forbidden move of the file, or no transaction named: a node may hold a forbidden move.
+        points = "names no other transaction" if spender is None else f"names {'this probe' if spender == txid else f'the probe {probes[spender]!r} of this file'} as the holder of the coin"
         say("FORBIDDEN MOVE MAY BE WITH A NODE")
         say(f"reason  : {answer}")
-        note(record, "probe already with a node", probe=name, transaction_id=txid, answer=answer)
+        note(record, "probe already with a node", probe=name, transaction_id=txid, answer=answer, spender=spender)
         raise Stop(
             EXIT_FORBIDDEN_ACCEPTED,
-            f"STOP at {title}: the node answers that it already has this transaction or one that spends the same coin: "
-            "the probe is in a node's mempool or on chain. Nothing more was submitted. Look with `status`.",
+            f"STOP at {title}: the node's answer says \"already\" and {points}: a forbidden move may be in a node's mempool or "
+            "on chain. Nothing more was submitted, and no later run with this record starts. Look with `status`.",
         )
-    if expected in words:
+    why_not = why_not_as_expected(words, probe["refusal_expected"])
+    if why_not is None:
         say(f"{title}: REFUSED as expected")
         note(record, "probe refused", probe=name, transaction_id=txid, answer=answer, expected=expected, daa_score=score)
         outcome = "refused as expected"
     else:
-        say(f"{title}: REFUSED FOR ANOTHER REASON - the answer does not contain {expected!r}")
-        note(record, "probe refused for another reason", probe=name, transaction_id=txid, answer=answer, expected=expected, daa_score=score)
+        say(f"{title}: REFUSED FOR ANOTHER REASON - {why_not}")
+        note(record, "probe refused for another reason", probe=name, transaction_id=txid, answer=answer, expected=expected, why_not=why_not, daa_score=score)
         outcome = "refused for another reason"
     say(f"reason  : {answer}")
     return outcome
@@ -2541,7 +2646,7 @@ async def cmd_check(args) -> int:
     addresses = party_addresses(args.party)
     data, chain_sha256 = read_json(args.chain)
     say(f"file    : {Path(args.chain).name}, SHA-256 {chain_sha256}")
-    problems, locks_checked, verified = check_offline(data, addresses, args.harness, args.verify_report)
+    problems, locks_checked, verified = check_offline(data, addresses, args.harness, args.verify_report, chain_sha256)
     if problems:
         say(f"REFUSED: {len(problems)} problem(s). Nothing was sent.")
         return EXIT_CHECK
@@ -2579,6 +2684,9 @@ async def cmd_send(args) -> int:
     lock = folder / "send.lock"
     try:
         folder.mkdir(parents=True, exist_ok=True)
+    except OSError as error:
+        raise Stop(EXIT_CHECK, f"The record folder {folder.name!r} cannot be used ({error.strerror}). Nothing was sent.") from None
+    try:
         with open(lock, "x", encoding="utf-8", newline="\n") as file:
             file.write(json.dumps({"pid": os.getpid(), "since_utc": utc_now()}) + "\n")
     except FileExistsError:
@@ -2612,11 +2720,19 @@ async def send_under_lock(args) -> int:
     addresses = party_addresses(args.party)
     data, chain_sha256 = read_json(args.chain)
     say(f"file    : {Path(args.chain).name}, SHA-256 {chain_sha256}")
-    problems, locks_checked, verified = check_offline(data, addresses, args.harness, args.verify_report)
+    problems, locks_checked, verified = check_offline(data, addresses, args.harness, args.verify_report, chain_sha256, for_send=True)
     if problems or not locks_checked or not verified:
         say(f"REFUSED: {len(problems)} problem(s). Nothing was sent.")
         return EXIT_CHECK
     folder = Path(args.record)
+    other = another_chain_in_the_record(folder, data, chain_sha256)
+    if other:
+        raise Stop(
+            EXIT_CHECK,
+            f"Refusing: the record folder {folder.name!r} is not the record of this chain: {other}. A run goes on from what its "
+            "record says, and those outcomes are not this file's. Give the file of that run, or a new record folder for a "
+            "new chain. No flag overrides this. Nothing was sent.",
+        )
     earlier = earlier_events(folder)
     probes = [move for move in data["moves"] if move["kind"] == "probe"]
     # A probe that an earlier run saw accepted, or lost the answer to, may be with a node. No flag overrides this.
@@ -2667,6 +2783,7 @@ async def send_under_lock(args) -> int:
             "run started",
             chain_file=Path(args.chain).name,
             chain_sha256=chain_sha256,
+            moves_sha256=moves_sha256(data),
             program_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             harness_sha256=harness_sha256(args.harness),
             verify_report_sha256=file_sha256(args.verify_report),
@@ -2719,6 +2836,14 @@ async def send_under_lock(args) -> int:
             if record.broken:
                 summary(EXIT_RECORD, line)
                 raise Stop(EXIT_RECORD, "STOP: the run went through, but the record could not be written in full: the lines are above.")
+            not_shown = run.probes_not_shown()
+            if not_shown:
+                told = "; ".join(f"{item['name']!r}: {item['outcome']}" for item in not_shown)
+                message = f"NOT SHOWN: the steps went through, but no run with this record saw these probes refused as expected: {told}."
+                say(message)
+                note(record, "probes not shown", exit_code=EXIT_PROBES, probes=[{"name": item["name"], "outcome": item["outcome"]} for item in not_shown])
+                summary(EXIT_PROBES, f"{line}. {message}")
+                return EXIT_PROBES
             summary(EXIT_OK, line)
             return EXIT_OK
         except Stop as stop:

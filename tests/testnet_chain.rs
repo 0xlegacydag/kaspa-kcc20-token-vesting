@@ -19,7 +19,7 @@
 //! accepted and every probe refused in the same way. Only then does the chain file get its
 //! final name.
 //!
-//! Two modes, never in one process:
+//! Three modes, never in one process:
 //!
 //! - with `VESTING_LAUNCH_INPUT` (the request), the real run: the keys come from the files
 //!   named by `VESTING_PAYER_KEY_FILE`, `VESTING_ALICE_KEY_FILE` and
@@ -27,9 +27,13 @@
 //!   named by `VESTING_LAUNCH_OUTPUT`, which must not exist yet;
 //! - without it, the self-test: made-up keys behind the same handles, a made-up funding coin
 //!   and token coin, the chain built at fee rates 100 and 1000 and written into the folder
-//!   named by `VESTING_SELFTEST_DIR` (by default `target/tmp/testnet-selftest`); the made-up
+//!   named by `VESTING_SELFTEST_DIR` (by default `tmp/testnet-selftest` in the build's target
+//!   folder); the made-up
 //!   key files go to a new folder in the system's temporary folder, outside the crate as in
-//!   a real run, and are removed at the end.
+//!   a real run, and are removed at the end, also when a check of the self-test fails;
+//! - with `VESTING_JUDGE_CHAIN` (a chain file that exists), the judging of that file: the
+//!   read-back from its fields alone, with no key and no request, against the transactions
+//!   of the file itself. Nothing is written.
 //!
 //! The builder does not run while `VESTING_DUMP_DIR` is set: the replay in `engine-2.1.0/`
 //! reads the transactions the checks of the contract judged, and the builder's are not
@@ -75,6 +79,8 @@ use token_vesting::release::{BENEFICIARY, Release};
 
 /// Environment variable: the request file. Its presence selects the real run.
 const INPUT_ENV: &str = "VESTING_LAUNCH_INPUT";
+/// Environment variable: a chain file that exists, to be judged again from its fields alone.
+const JUDGE_ENV: &str = "VESTING_JUDGE_CHAIN";
 /// Environment variable: the chain file to write.
 const OUTPUT_ENV: &str = "VESTING_LAUNCH_OUTPUT";
 /// Environment variables of the three key files.
@@ -96,6 +102,18 @@ const COIN_VALUE: u64 = SOMPI_PER_KAS;
 const CLIFF: i64 = 3_000;
 const DURATION: i64 = 10_000;
 const TOTAL: i64 = 10;
+/// The moves of the run, in their order.
+const MOVE_NAMES: [&str; 9] = [
+    "A1 vesting genesis",
+    "A2 fund the vault",
+    "B1 before the cliff",
+    "B2 dated at the end",
+    "B3 more than vested",
+    "B4 to another key",
+    "R1 first release",
+    "R2 second release",
+    "R3 the rest",
+];
 /// The releases: DAA units after the start, and tokens.
 const RELEASES: [(&str, i64, i64, &str); 3] = [
     ("R1 first release", CLIFF, 3, "3 tokens at the cliff"),
@@ -565,8 +583,26 @@ impl Request {
         if self.start <= self.virtual_daa_score {
             return Err("schedule.start is not after virtual_daa_score".to_string());
         }
-        if self.start + DURATION as u64 + SEND_MARGIN >= LOCK_TIME_THRESHOLD {
+        let last = self.start.checked_add(DURATION as u64 + SEND_MARGIN);
+        if last.is_none_or(|last| last >= LOCK_TIME_THRESHOLD) {
             return Err("the schedule leaves the DAA-score domain of lock times".to_string());
+        }
+        // These three go into the files of the run as they are; a file of the run holds no
+        // control character and no long dash.
+        for (field, text) in [
+            ("read_at_utc", &self.read_at_utc),
+            ("node", &self.node),
+            ("node_version", &self.node_version),
+        ] {
+            if text
+                .chars()
+                .any(|c| c.is_control() || c == '\u{2013}' || c == '\u{2014}')
+            {
+                return Err(format!(
+                    "{field} holds a control character or a long dash, which the files of a run \
+                     do not carry"
+                ));
+            }
         }
         if self.token_coin.value != self.coin_value {
             return Err(format!(
@@ -2485,6 +2521,17 @@ fn read_back(path: &Path, judged: &[Transaction]) -> Result<Vec<String>, String>
             }
             other => return Err(fail(format!("an unknown kind {other:?}"))),
         }
+        // No id and no signature covers a compute budget: a budget raised in the file shows
+        // only in the compute mass a node calculates.
+        let numbers = answer
+            .numbers()
+            .ok_or_else(|| fail("the gate gives no masses or no fee floor".to_string()))?;
+        if entry["masses"] != numbers.json() || entry["fee_floor"] != numbers.fee_floor {
+            return Err(fail(format!(
+                "a node calculates other masses or another fee floor than the file says: \
+                 {numbers:?}"
+            )));
+        }
     }
     if chain["totals"]["fees_of_steps"] != fees_of_steps
         || chain["totals"]["fees_of_probes"] != fees_of_probes
@@ -2623,6 +2670,66 @@ fn real_run(input: &Path) -> Result<(), String> {
     Ok(())
 }
 
+/// Judges a chain file that exists, from its fields alone: the read-back against the
+/// transactions of the file itself. It takes no key: what the signatures and the compute
+/// budgets are worth is for the node rules to say.
+fn judge_file(path: &Path) -> Result<Vec<String>, String> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let chain: Value = serde_json::from_str(&text)
+        .map_err(|error| format!("{}: not JSON: {error}", path.display()))?;
+    let moves = chain["moves"].as_array().ok_or("the file has no moves")?;
+    let names: Vec<&str> = moves
+        .iter()
+        .map(|entry| entry["name"].as_str().unwrap_or("?"))
+        .collect();
+    if names != MOVE_NAMES {
+        return Err(format!(
+            "the moves are {names:?}, the run has {MOVE_NAMES:?}"
+        ));
+    }
+    let mut own = Vec::new();
+    for (entry, name) in moves.iter().zip(names) {
+        own.push(rebuilt_from_the_file(entry).map_err(|error| format!("{name}: {error}"))?);
+    }
+    read_back(path, &own)
+}
+
+/// The judging of a file, only when `VESTING_JUDGE_CHAIN` names one.
+fn the_judged_chain() -> bool {
+    let Some(path) = std::env::var_os(JUDGE_ENV).filter(|value| !value.is_empty()) else {
+        return false;
+    };
+    let others: Vec<&str> = [
+        INPUT_ENV,
+        OUTPUT_ENV,
+        PAYER_KEY_ENV,
+        ALICE_KEY_ENV,
+        BENEFICIARY_KEY_ENV,
+        "VESTING_SOURCE_FILE",
+        "VESTING_MUTANT",
+    ]
+    .into_iter()
+    .filter(|variable| std::env::var_os(variable).is_some_and(|value| !value.is_empty()))
+    .collect();
+    assert!(
+        others.is_empty(),
+        "{JUDGE_ENV} is set, and so is {}: a file is judged with no request, no key and the \
+         contract as it is",
+        others.join(", ")
+    );
+    let lines = judge_file(Path::new(&path))
+        .unwrap_or_else(|error| panic!("the chain file does not pass: {error}"));
+    for line in &lines {
+        println!("  {line}");
+    }
+    println!(
+        "{}: judged from its fields alone, {} moves as the file says",
+        path.to_string_lossy(),
+        lines.len()
+    );
+    true
+}
+
 /// The real run, only when `VESTING_LAUNCH_INPUT` names a request.
 fn the_real_chain() {
     let Some(input) = std::env::var_os(INPUT_ENV).filter(|value| !value.is_empty()) else {
@@ -2716,6 +2823,15 @@ fn request_text(request: &Request) -> String {
     serde_json::to_string_pretty(&document).expect("json") + "\n"
 }
 
+/// A folder that goes when this value goes, also when a panic unwinds through it.
+struct RemovedAtTheEnd(PathBuf);
+
+impl Drop for RemovedAtTheEnd {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
+}
+
 fn selftest_dir() -> PathBuf {
     std::env::var_os(SELFTEST_DIR_ENV)
         .filter(|value| !value.is_empty())
@@ -2738,20 +2854,7 @@ fn self_test_at(feerate: u64, secrets: &Secrets) -> Value {
         .iter()
         .map(|entry| entry["name"].as_str().unwrap_or("?"))
         .collect();
-    assert_eq!(
-        names,
-        [
-            "A1 vesting genesis",
-            "A2 fund the vault",
-            "B1 before the cliff",
-            "B2 dated at the end",
-            "B3 more than vested",
-            "B4 to another key",
-            "R1 first release",
-            "R2 second release",
-            "R3 the rest",
-        ]
-    );
+    assert_eq!(names, MOVE_NAMES);
     for entry in moves {
         let step = entry["kind"] == "step";
         for layer in ["consensus", "mempool", "block"] {
@@ -2849,17 +2952,17 @@ fn the_self_test() {
     );
     let secrets = made_up_secrets();
     // The made-up keys go through key files outside the crate, as in a real run.
-    let directory = std::env::temp_dir().join(format!(
+    let directory = RemovedAtTheEnd(std::env::temp_dir().join(format!(
         "vesting-selftest-made-up-keys-{}",
         std::process::id()
-    ));
-    fs::create_dir_all(&directory).expect("a folder for the made-up keys");
+    )));
+    fs::create_dir_all(&directory.0).expect("a folder for the made-up keys");
     let files = [
-        (PAYER_KEY_ENV, directory.join("made-up-payer.key")),
-        (ALICE_KEY_ENV, directory.join("made-up-alice.key")),
+        (PAYER_KEY_ENV, directory.0.join("made-up-payer.key")),
+        (ALICE_KEY_ENV, directory.0.join("made-up-alice.key")),
         (
             BENEFICIARY_KEY_ENV,
-            directory.join("made-up-beneficiary.key"),
+            directory.0.join("made-up-beneficiary.key"),
         ),
     ];
     for ((_, path), secret) in
@@ -2879,6 +2982,11 @@ fn the_self_test() {
     loaded.register();
     let low = self_test_at(100, &secrets);
     let high = self_test_at(1_000, &secrets);
+    // One request builds to the same moves, whenever it is built: the sender goes on from a
+    // record with a new build of its request, and with nothing else.
+    let again = parse_request(&request_text(&made_up_request(100))).expect("the request parses");
+    let again = build(&again).unwrap_or_else(|error| panic!("the second build: {error}"));
+    assert_eq!(low["moves"], again.chain["moves"]);
     // The covenant id comes from the funding outpoint and the vesting output alone.
     assert_eq!(low["vesting_covenant_id"], high["vesting_covenant_id"]);
     assert_eq!(low["parties"], high["parties"]);
@@ -2887,23 +2995,36 @@ fn the_self_test() {
         high["moves"][0]["transaction_id"]
     );
     refusals(&files);
-    fs::remove_dir_all(&directory).expect("the made-up key files are removed");
+    let path = directory.0.clone();
+    drop(directory);
+    assert!(!path.exists(), "the made-up key files are removed");
 }
 
 /// What the builder must refuse: a key file inside the crate, a request outside the run's
 /// bounds, coins not of the parties, a chain file that exists, and a chain file changed after
 /// it was written.
 fn refusals(files: &[(&str, PathBuf); 3]) {
-    let inside = Path::new(env!("CARGO_TARGET_TMPDIR")).join("made-up-payer.key");
-    fs::create_dir_all(inside.parent().expect("a parent")).expect("the target's temporary folder");
-    fs::copy(&files[0].1, &inside).expect("a key file inside the crate");
+    // A panic unwinds through a folder of made-up keys and takes it along.
+    let unwound =
+        std::env::temp_dir().join(format!("vesting-selftest-unwound-{}", std::process::id()));
+    fs::create_dir_all(&unwound).expect("a folder to unwind through");
+    let quiet = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| {}));
+    let caught = std::panic::catch_unwind(|| {
+        let _folder = RemovedAtTheEnd(unwound.clone());
+        panic!("the self-test's own");
+    });
+    std::panic::set_hook(quiet);
+    assert!(caught.is_err() && !unwound.exists());
+
+    // A key file inside the crate, by the crate's own folder (the build's target folder may
+    // lie anywhere). It is refused by its path: no file needs to be there.
     let mut inside_files = files.clone();
-    inside_files[0].1 = inside.clone();
+    inside_files[0].1 = Path::new(env!("CARGO_MANIFEST_DIR")).join("made-up-payer.key");
     let refused = load_keys(&inside_files, &[])
         .err()
         .expect("a key file inside the crate");
     assert!(refused.contains("inside the repository"), "{refused}");
-    let _ = fs::remove_file(&inside);
     let refused = load_keys(files, &[files[1].1.clone()])
         .err()
         .expect("a key file at a path the run writes");
@@ -2940,6 +3061,23 @@ fn refusals(files: &[(&str, PathBuf); 3]) {
             .unwrap_or_else(|| panic!("a request with another {why} is refused"));
         assert!(refused.contains(why), "{refused}");
     }
+    // The schedule's last score does not fit: a refusal, not an overflow.
+    let mut last_score = made_up_request(100);
+    last_score.start = u64::MAX;
+    let refused = last_score.check().expect_err("a start at the end of u64");
+    assert!(refused.contains("DAA-score domain"), "{refused}");
+    // A long dash or a control character in a text of the request: a refusal, not a panic later.
+    for (from, to) in [
+        ("\"node_version\": \"", "\"node_version\": \"\u{2013}"),
+        ("\"node\": \"", "\"node\": \"\u{2014}"),
+        ("\"read_at_utc\": \"", "\"read_at_utc\": \"\\r"),
+    ] {
+        assert_eq!(good.matches(from).count(), 1, "{from}");
+        let refused = parse_request(&good.replace(from, to))
+            .err()
+            .unwrap_or_else(|| panic!("a request with {to} is refused"));
+        assert!(refused.contains(" holds a control character"), "{refused}");
+    }
     let mut not_the_payers = made_up_request(100);
     not_the_payers.funding.script_public_key = p2pk(ALICE);
     assert!(not_the_payers.check_coins().is_err());
@@ -2973,8 +3111,8 @@ fn refusals(files: &[(&str, PathBuf); 3]) {
     let changed = selftest_dir().join("changed.chain.json");
     let r1 = 6;
     type Change = fn(&mut Value);
-    let changes: [(&str, Change); 3] = [
-        ("a signature byte", |chain| {
+    let changes: [(&str, &str, Change); 3] = [
+        ("a signature byte", "not accepted", |chain| {
             let script = chain["moves"][6]["inputs"][0]["signature_script"]
                 .as_str()
                 .expect("a script")
@@ -2983,20 +3121,20 @@ fn refusals(files: &[(&str, PathBuf); 3]) {
             chain["moves"][6]["inputs"][0]["signature_script"] =
                 json!(format!("{}{flipped}{}", &script[..2], &script[4..]));
         }),
-        ("a compute budget", |chain| {
+        ("a compute budget", "not accepted", |chain| {
             let budget = chain["moves"][6]["inputs"][1]["compute_budget"]
                 .as_u64()
                 .expect("a budget");
             chain["moves"][6]["inputs"][1]["compute_budget"] = json!(budget - 1);
         }),
-        ("a lock time", |chain| {
+        ("a lock time", "the id is", |chain| {
             let lock = chain["moves"][6]["lock_time"]
                 .as_u64()
                 .expect("a lock time");
             chain["moves"][6]["lock_time"] = json!(lock + 1);
         }),
     ];
-    for (what, change) in changes {
+    for (what, own_words, change) in changes {
         let mut copy = chain.clone();
         change(&mut copy);
         fs::write(&changed, chain_text(&copy)).expect("a changed chain");
@@ -3008,6 +3146,10 @@ fn refusals(files: &[(&str, PathBuf); 3]) {
             .err()
             .unwrap_or_else(|| panic!("a chain with {what} changed is refused"));
         println!("changed {what}: {refused}");
+        assert!(
+            refused.contains("R1 first release") && refused.contains(own_words),
+            "{refused}"
+        );
         let refused = read_back(&changed, &judged)
             .err()
             .unwrap_or_else(|| panic!("a chain with {what} changed is refused"));
@@ -3022,6 +3164,31 @@ fn refusals(files: &[(&str, PathBuf); 3]) {
     let refused = read_back(&changed, &judged).expect_err("B2 sent after its lock time");
     assert!(refused.contains("B2 dated at the end"), "{refused}");
     println!("changed B2's window: {refused}");
+    // Judging a file that exists, with no key: the chain as written passes; a budget of 1
+    // does not, in a probe or in a step, nor one raised by 1; and neither does a file with a
+    // move left out.
+    judge_file(&path).unwrap_or_else(|error| panic!("the self-test chain: {error}"));
+    for (position, name) in [(2, "B1 before the cliff"), (6, "R1 first release")] {
+        let budget = chain["moves"][position]["inputs"][0]["compute_budget"]
+            .as_u64()
+            .expect("a budget");
+        for (other, words) in [(1, "script units"), (budget + 1, "other masses")] {
+            let mut changed_budget = chain.clone();
+            changed_budget["moves"][position]["inputs"][0]["compute_budget"] = json!(other);
+            fs::write(&changed, chain_text(&changed_budget)).expect("a changed chain");
+            let refused = judge_file(&changed).expect_err("another compute budget");
+            println!("judged with a budget of {other} at {name}: {refused}");
+            assert!(
+                refused.contains(name) && refused.contains(words),
+                "{refused}"
+            );
+        }
+    }
+    let mut shorter = chain.clone();
+    shorter["moves"].as_array_mut().expect("moves").remove(4);
+    fs::write(&changed, chain_text(&shorter)).expect("a changed chain");
+    let refused = judge_file(&changed).expect_err("a move left out");
+    assert!(refused.contains("the moves are"), "{refused}");
     let _ = fs::remove_file(&changed);
     println!("refusals: as intended");
 }
@@ -3032,6 +3199,9 @@ fn main() {
         "VESTING_DUMP_DIR is set: the builder's transactions would go into the input of the \
          replay in engine-2.1.0/; run the builder without it"
     );
+    if the_judged_chain() {
+        return;
+    }
     the_self_test();
     the_real_chain();
 }

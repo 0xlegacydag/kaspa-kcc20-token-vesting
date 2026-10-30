@@ -22,6 +22,7 @@ import asyncio
 import atexit
 import contextlib
 import copy
+import hashlib
 import io
 import json
 import os
@@ -100,7 +101,8 @@ BUILDER_CHAINS = [BUILDER_FOLDER / f"vesting-selftest-{rate}.chain.json" for rat
 
 def verify_report(chain: dict, **change) -> dict:
     report = {
-        "format": "vesting-verify-report/1",
+        "format": "vesting-verify-report/2",
+        "chain_sha256": hashlib.sha256(json.dumps(chain).encode("utf-8")).hexdigest(),  # the bytes `chain_file` writes
         "vesting_covenant_id": chain["vesting_covenant_id"],
         "mismatches": 0,
         "outputs": [
@@ -399,7 +401,7 @@ BROKEN = [
     ("send_after_daa_of_b2", edit(B2, lambda m: m.update(send_after_daa=m["lock_time"] + 20)), f"send_after_daa is {START + 10020}; by its rule it is {START + 1020}"),
     ("judged_at_daa_of_r2", edit(R2, setter(judged_at_daa=START)), f"by its rule it is {START + 6520}"),
     ("refusal_kind", edit(B1, lambda m: m["refusal_expected"].update(kind="finality")), "this probe is refused by 'scripts'"),
-    ("refusal_text_empty", edit(B3, lambda m: m["refusal_expected"].update(node_message_contains=" ")), "refusal_expected.node_message_contains is empty"),
+    ("refusal_text_empty", edit(B3, lambda m: m["refusal_expected"].update(node_message_contains=" ")), "refusal_expected.node_message_contains is ' '"),
     ("gate_layer", edit(B1, lambda m: m["gate"]["refusal"].update(layer="consensus")), "the gate refused it at the layer 'consensus'"),
     ("gate_input", edit(B4, lambda m: m["gate"]["refusal"].update(input=1)), "the gate refused input 1; refusal_expected says input 0"),
     ("gate_passed_the_refusing_layer", edit(B2, lambda m: m["gate"].update(consensus=True)), "is not false, though it refused it there"),
@@ -564,11 +566,18 @@ class Check(Folder):
         self.assertIn("refused with 'Unsatisfied lock time'", printed)
         node = FakeNode()
         code, printed = self.send(node, chain)
-        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
         # The fake node answers with "verification failed": for B1 that is now another reason.
         other = [e["probe"] for e in self.events() if e["what"] == "probe refused for another reason"]
         self.assertEqual(other, [B1])
         self.assertIn("the answer does not contain 'Unsatisfied lock time'", printed)
+
+    def test_words_that_format_md_does_not_name_are_refused(self):
+        chain = copy.deepcopy(FIXTURE)
+        move_of(chain, B3)["refusal_expected"]["node_message_contains"] = "a"
+        code, printed = self.check(chain)
+        self.assertEqual(code, vs.EXIT_CHECK, printed)
+        self.assertIn("refusal_expected.node_message_contains is 'a'", printed)
 
     def test_a_gate_message_without_the_expected_words_is_refused(self):
         chain = copy.deepcopy(FIXTURE)
@@ -594,7 +603,8 @@ class Check(Folder):
         extra = verify_report(FIXTURE)
         extra["outputs"].append({"move": R3, "output": 1, "role": "vesting", "script_public_key": "aa20" + "00" * 32 + "87", "ok": True})
         cases = (
-            (verify_report(FIXTURE, format="something/1"), "not 'vesting-verify-report/1'"),
+            (verify_report(FIXTURE, format="something/1"), "not 'vesting-verify-report/2'"),
+            (verify_report(FIXTURE, chain_sha256="33" * 32), f"it is about the chain file with SHA-256 {'33' * 32}"),
             (verify_report(FIXTURE, mismatches=1), "it counts 1 mismatches"),
             (verify_report(FIXTURE, vesting_covenant_id="22" * 32), "it is about the vesting covenant 2222"),
             (missing, f"output {vesting[0][1]} of {vesting[0][0]!r}, a vesting coin, is not in the report"),
@@ -607,6 +617,8 @@ class Check(Folder):
                 code, printed = self.check(more=("--verify-report", self.report_file(report)))
                 self.assertEqual(code, vs.EXIT_CHECK, printed)
                 self.assertIn(phrase, printed)
+                self.assertIn("does not fit this file", printed)
+                self.assertNotIn("bound to this file", printed)
 
     def test_a_total_for_the_reader_that_differs_is_a_note(self):
         chain = copy.deepcopy(FIXTURE)
@@ -980,7 +992,7 @@ class Send(Folder):
         node = FakeNode(daa=START + 8500)
         with mock.patch.object(vs, "check_moves", lambda data: []):
             code, printed = self.send(node, self.b2_with_an_open_window())
-        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
         self.assertNotIn(IDS[B2], node.submitted)
         self.assertIn("probe 'B2 dated at the end': NOT SENT (window passed: the DAA score", printed)
         reasons = [e["reason"] for e in self.events() if e["what"] == "probe not sent"]
@@ -992,7 +1004,7 @@ class Send(Folder):
         move_of(chain, B2)["send_after_daa"] = START + 7995  # not reached before START + 8000 at the first look
         with mock.patch.object(vs, "check_moves", lambda data: []):
             code, printed = self.send(node, chain)
-        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
         self.assertNotIn(IDS[B2], node.submitted)
 
     def test_the_window_is_checked_again_right_before_a_hand_over(self):
@@ -1052,7 +1064,7 @@ class Send(Folder):
         node = FakeNode()
         node.how[IDS[B3]] = "raw:verification failed (said before) -> Rejected transaction TXID: fee too low"
         code, printed = self.send(node)
-        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
         self.assertIn("1 refused for another reason", printed)
 
     def test_a_reconnect_is_recorded_and_every_line_names_the_node_of_its_moment(self):
@@ -1136,12 +1148,176 @@ class Send(Folder):
         node = FakeNode()
         node.how[IDS[B1]] = "refuse-fee"
         code, printed = self.send(node)
-        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
         self.assertEqual(node.submitted, SENT_IN_A_WHOLE_RUN)
         self.assertIn("REFUSED FOR ANOTHER REASON - the answer does not contain 'verification failed'", printed)
         other = [event for event in self.events() if event["what"] == "probe refused for another reason"]
         self.assertEqual(other[0]["answer"], f"Rejected transaction {IDS[B1]}: {FEE_REFUSAL}")
         self.assertIn("1 refused for another reason", printed)
+        self.assertIn(f"NOT SHOWN: the steps went through, but no run with this record saw these probes refused as expected: {B1!r}: refused for another reason", printed)
+        self.assertEqual(self.summaries()[0]["exit_code"], vs.EXIT_PROBES)
+        # A later run does not send it again, and does not forget it.
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
+        self.assertEqual(node.submitted.count(IDS[B1]), 1)
+
+    def test_probes_a_later_step_has_passed_are_not_shown_in_a_record_that_never_saw_them(self):
+        node = FakeNode()
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_OK, printed)
+        code, printed = self.send(node, record="a-new-record")
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
+        self.assertEqual(node.submitted, SENT_IN_A_WHOLE_RUN)
+        self.assertIn("4 not sent, the chain is past it", printed)
+        self.assertEqual(self.events("a-new-record")[-1]["what"], "probes not shown")
+
+    def test_a_refusal_that_names_another_input_is_another_reason(self):
+        node = FakeNode()
+        node.how[IDS[B2]] = "say:transaction input #1 is not finalized"
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_PROBES, printed)
+        self.assertIn("REFUSED FOR ANOTHER REASON - the answer names input 1, the file expects input 0", printed)
+        other = [event for event in self.events() if event["what"] == "probe refused for another reason"]
+        self.assertEqual([event["probe"] for event in other], [B2])
+
+    def test_a_probe_s_coin_taken_by_a_stranger_is_not_a_forbidden_move(self):
+        stranger = "ab" * 32
+        node = FakeNode()
+        # The outpoint in the words carries an id of the file too: only the spender counts.
+        node.how[IDS[B1]] = f"say:output ({IDS[A2]}, 1) already spent by transaction {stranger} in the mempool"
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_INCONSISTENT, printed)
+        self.assertIn(f"the node did not take it and names a transaction this file does not know, {stranger}, as the holder", printed)
+        self.assertNotIn("FORBIDDEN MOVE", printed)
+        taken = [event for event in self.events() if event["what"] == vs.PROBE_COIN_TAKEN]
+        self.assertEqual((taken[0]["probe"], taken[0]["spender"]), (B1, stranger))
+        self.assertEqual(self.summaries()[0]["exit_code"], vs.EXIT_INCONSISTENT)
+        # No lasting block: the next run starts by the online check and tries the probe again.
+        del node.how[IDS[B1]]
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_OK, printed)
+        self.assertEqual(node.submitted.count(IDS[B1]), 2)
+
+    def test_a_step_s_coin_held_by_another_transaction_is_not_told_as_the_step_itself(self):
+        stranger = "ab" * 32
+        node = FakeNode()
+        node.how[IDS[A2]] = f"say:output ({IDS[A1]}, 1) already spent by transaction {stranger} in the mempool"
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_REFUSED, printed)
+        self.assertIn(f"the node names another transaction, {stranger}, as the holder of a coin of this step", printed)
+        self.assertNotIn("the node seems to have this transaction already", printed)
+
+    def test_a_probe_s_coin_taken_by_a_step_of_the_file_is_told_by_its_name(self):
+        node = FakeNode()
+        node.how[IDS[B3]] = f"say:output ({IDS[A2]}, 0) already spent by transaction {IDS[R1]} in the mempool"
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_INCONSISTENT, printed)
+        self.assertIn(f"names the step {R1!r} of this file, {IDS[R1]}, as the holder", printed)
+
+    def test_already_about_a_probe_of_the_file_or_no_transaction_blocks_the_record(self):
+        cases = (
+            (f"output ({IDS[A2]}, 0) already spent by transaction {IDS[B1]} in the mempool", f"names the probe {B1!r} of this file as the holder"),
+            (f"output ({IDS[A2]}, 0) already spent by transaction {IDS[B3]} in the mempool", "names this probe as the holder"),
+            (f"transaction {IDS[B3]} is already in the mempool", "names no other transaction"),
+            (f"transaction {IDS[B3]} was already accepted by the consensus", "names no other transaction"),
+        )
+        for number, (words, phrase) in enumerate(cases):
+            with self.subTest(words):
+                node = FakeNode()
+                node.how[IDS[B3]] = "say:" + words
+                record = f"record-{number}"
+                code, printed = self.send(node, record=record)
+                self.assertEqual(code, vs.EXIT_FORBIDDEN_ACCEPTED, printed)
+                self.assertIn("FORBIDDEN MOVE MAY BE WITH A NODE", printed)
+                self.assertIn(f"says \"already\" and {phrase}", printed)
+                self.assertEqual([e["what"] for e in self.events(record)][-2:], ["probe already with a node", "run stopped"])
+                code, printed = self.send(node, record=record, more=("--again-after-a-stop",))
+                self.assertEqual(code, vs.EXIT_FORBIDDEN_ACCEPTED, printed)
+                self.assertIn("No flag overrides this", printed)
+                self.assertEqual(node.submitted.count(IDS[B3]), 1)
+
+    def rewritten_first_lines(self, change) -> None:
+        for path in (self.folder / "record").glob("run-*Z.jsonl"):
+            lines = path.read_text(encoding="utf-8").splitlines()
+            first = json.loads(lines[0])
+            change(first)
+            path.write_text("\n".join([json.dumps(first), *lines[1:]]) + "\n", encoding="utf-8")
+
+    def stopped_at_r2(self, node) -> None:
+        node.how[IDS[R2]] = "refuse"
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_REFUSED, printed)
+        del node.how[IDS[R2]]
+
+    def test_a_record_of_another_chain_stops_the_run_before_anything_is_read(self):
+        node = FakeNode()
+        self.stopped_at_r2(node)
+        other = copy.deepcopy(FIXTURE)
+        move_of(other, B1)["inputs"][0]["compute_budget"] -= 1  # no id covers it
+        self.assertEqual(move_of(other, B1)["transaction_id"], IDS[B1])
+        connections = node.connections
+        for more in ((), ("--again-after-a-stop",)):
+            code, printed = self.send(node, other, more=more)
+            self.assertEqual(code, vs.EXIT_CHECK, printed)
+            self.assertIn("is not the record of this chain", printed)
+            self.assertIn("whose moves differ from this file's", printed)
+        self.assertEqual(node.connections, connections)
+
+    def test_a_new_build_with_the_same_moves_goes_on_from_the_record(self):
+        node = FakeNode()
+        self.stopped_at_r2(node)
+        rebuilt = copy.deepcopy(FIXTURE)
+        rebuilt["built_at_utc"] = "2030-01-01T00:00:00Z"
+        code, printed = self.send(node, rebuilt, more=("--again-after-a-stop",))
+        self.assertEqual(code, vs.EXIT_OK, printed)
+        for name in (B1, B2, B3, B4):
+            self.assertEqual(node.submitted.count(IDS[name]), 1, name)
+        starts = [event for event in self.events() if event["what"] == "run started"]
+        self.assertNotEqual(starts[0]["chain_sha256"], starts[1]["chain_sha256"])
+        self.assertEqual(starts[0]["moves_sha256"], starts[1]["moves_sha256"])
+
+    def test_a_record_without_the_fingerprint_of_its_moves_is_compared_by_its_file(self):
+        node = FakeNode()
+        self.stopped_at_r2(node)
+        self.rewritten_first_lines(lambda first: first.pop("moves_sha256"))
+        rebuilt = copy.deepcopy(FIXTURE)
+        rebuilt["built_at_utc"] = "2030-01-01T00:00:00Z"
+        code, printed = self.send(node, rebuilt, more=("--again-after-a-stop",))
+        self.assertEqual(code, vs.EXIT_CHECK, printed)
+        self.assertIn("it names no fingerprint of its moves", printed)
+        code, printed = self.send(node, more=("--again-after-a-stop",))
+        self.assertEqual(code, vs.EXIT_OK, printed)
+
+    def test_a_record_that_does_not_begin_with_its_start_stops_the_run(self):
+        folder = self.folder / "record"
+        folder.mkdir()
+        event = {"what": "probe refused", "transaction_id": IDS[B1]}
+        (folder / "run-1Z.jsonl").write_text(json.dumps(event) + "\n", encoding="utf-8")
+        node = FakeNode()
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_CHECK, printed)
+        self.assertIn("does not begin with its \"run started\" line", printed)
+        self.assertEqual(node.submitted, [])
+
+    def test_a_report_about_another_file_or_of_the_earlier_format_does_not_send(self):
+        for report, phrase in (
+            (verify_report(FIXTURE, chain_sha256="33" * 32), "it is about the chain file with SHA-256"),
+            (verify_report(FIXTURE, format="vesting-verify-report/1"), "names no chain file"),
+        ):
+            with self.subTest(phrase):
+                node = FakeNode()
+                code, printed = self.send(node, report=report)
+                self.assertEqual(code, vs.EXIT_CHECK, printed)
+                self.assertIn(phrase, printed)
+                self.assertEqual((node.submitted, node.connections), ([], 0))
+
+    def test_a_record_folder_that_is_a_file_is_told_as_such(self):
+        (self.folder / "record").write_text("a file", encoding="utf-8")
+        node = FakeNode()
+        code, printed = self.send(node)
+        self.assertEqual(code, vs.EXIT_CHECK, printed)
+        self.assertIn("The record folder 'record' cannot be used", printed)
+        self.assertNotIn("send.lock", printed)
 
     def test_a_probe_whose_coin_is_already_spent_stops_the_run(self):
         node = FakeNode()
@@ -1303,6 +1479,40 @@ class Send(Folder):
         self.assertEqual(code, vs.EXIT_RECORD, printed)
         self.assertEqual(node.submitted, [IDS[A1], IDS[A2]])
         self.assertIn("RECORD NOT WRITTEN", printed)
+
+
+class TheRecordOfTheRun(Folder):
+    """The files of the run of 2026-10-15, real words of a real node."""
+
+    RUN = HERE.parent / "results" / "2026-10-15-testnet-10"
+
+    def setUp(self):
+        super().setUp()
+        self.chain = json.loads((self.RUN / "chain.json").read_bytes())
+        self.parties = {name: address(party["script_public_key"]) for name, party in self.chain["parties"].items()}
+
+    def check_with(self, report: str) -> tuple:
+        return run(["check", str(self.RUN / "chain.json"), *party_args(self.parties), "--verify-report", str(self.RUN / report)])
+
+    def test_the_answers_of_the_node_read_as_the_refusals_the_file_expects(self):
+        (record,) = (self.RUN / "record").glob("run-*Z.jsonl")
+        moves = {move["transaction_id"]: move for move in self.chain["moves"]}
+        refused = [event for event in map(json.loads, record.read_text(encoding="utf-8").splitlines()) if event["what"] == "probe refused"]
+        self.assertEqual(len(refused), 4)
+        for event in refused:
+            txid = event["transaction_id"]
+            self.assertIsNone(vs.why_not_as_expected(vs.node_words(event["answer"], txid), moves[txid]["refusal_expected"]), event["answer"])
+
+    def test_the_report_of_the_run_passes_check_but_is_told_as_not_bound(self):
+        code, printed = self.check_with("verify.json")
+        self.assertEqual(code, 0, printed)
+        self.assertIn("NOT BOUND to this file: its format names no chain file, and `send` does not take it", printed)
+
+    def test_the_report_of_today_s_verifier_is_bound_to_the_file(self):
+        code, printed = self.check_with("verify-format-2.json")
+        self.assertEqual(code, 0, printed)
+        self.assertIn("bound to this file by its SHA-256", printed)
+        self.assertNotIn("NOT BOUND", printed)
 
 
 class TheBuilderSChains(Folder):

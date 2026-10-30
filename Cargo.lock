@@ -3762,6 +3762,7 @@ dependencies = [
  "node-gate",
  "secp256k1",
  "serde_json",
+ "sha2",
  "silverscript-abi",
  "silverscript-lang",
 ]

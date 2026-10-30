@@ -14,10 +14,10 @@
 # lacks keccakf1600_x86-64-msvc.asm. It is not run on macOS, to keep the run short.
 #
 # On Linux, macOS and Windows as well, the programs of the testnet-10 run (testnet/README.md):
-# the builder's self-test with made-up keys, and the verifier on the chain file of the run
-# of 2026-10-15, whose report must be the one in the record byte for byte; in a job of its
-# own, the tests of the sender, its check of that chain file, and the three checksums the
-# record of the run names.
+# the self-tests of the builder (made-up keys) and the verifier; the verifier on the chain
+# file of the run of 2026-10-15, whose report must be the one kept next to the record byte
+# for byte, and the builder's judging of that file; in a job of its own, the tests of the
+# sender, its check of that chain file, and the three checksums the record of the run names.
 #
 # Not run here: the mutation run of tools/mutation-run.mjs, which builds and runs the honest
 # and forbidden cases 31 times (the time of its last run: results/mutation-run.txt); the
@@ -94,6 +94,12 @@ jobs:
           export KCC20_REFERENCE_DIR
           cargo test --frozen --test testnet_chain
 
+      - name: "The verifier of the testnet run: its self-test on changed files"
+        run: |
+          KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
+          export KCC20_REFERENCE_DIR
+          cargo test --frozen --test testnet_verify
+
       - name: "The record of the testnet run: every lock computed again, the same report"
         run: |
           KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
@@ -102,7 +108,14 @@ jobs:
           export VESTING_VERIFY_REPORT=target/verify-of-the-run.json
           rm -f "$VESTING_VERIFY_REPORT"
           cargo test --frozen --test testnet_verify
-          cmp "$VESTING_VERIFY_REPORT" testnet/results/2026-10-15-testnet-10/verify.json
+          cmp "$VESTING_VERIFY_REPORT" testnet/results/2026-10-15-testnet-10/verify-format-2.json
+
+      - name: "The record of the testnet run: every transaction judged again from the file"
+        run: |
+          KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
+          export KCC20_REFERENCE_DIR
+          export VESTING_JUDGE_CHAIN=testnet/results/2026-10-15-testnet-10/chain.json
+          cargo test --frozen --test testnet_chain
 
       - name: "The replay on 2.1.0: cargo fetch --locked"
         if: runner.os == 'Linux'
@@ -168,7 +181,7 @@ jobs:
           --party payer=kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
           --party alice=kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
           --party beneficiary=kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf
-          --verify-report results/2026-10-15-testnet-10/verify.json
+          --verify-report results/2026-10-15-testnet-10/verify-format-2.json
 
       - name: The three checksums the record of the run names
         working-directory: testnet
@@ -183,7 +196,7 @@ jobs:
           for want, name in (
               (first["chain_sha256"], run + "/chain.json"),
               (first["verify_report_sha256"], run + "/verify.json"),
-              (first["program_sha256"], "vesting_send.py"),
+              (first["program_sha256"], run + "/vesting_send.py"),
           ):
               with open(name, "rb") as file:
                   have = hashlib.sha256(file.read()).hexdigest()

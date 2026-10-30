@@ -141,7 +141,7 @@ No coin of the vesting covenant is left: R3 ended the vesting coin with an empty
 ## Files in this folder
 
 The files below are kept as the programs and the shell wrote them, with the two exceptions
-named. This page is a summary of them, written after the run.
+named. This page is a summary of them, written after the run. The last two came here later.
 
 - `token-state.json` - the state of Alice's 10-token coin as the record of 2026-10-11 gives
   it; its field `source` names the place. `prepare` checked that the coin on chain has the
@@ -169,6 +169,11 @@ named. This page is a summary of them, written after the run.
 - `status-after.log` - the chain read back from the second node after the run.
 - `explorer/` - the answers of the explorer's API (`https://api-tn10.kaspa.org/transactions/<id>`)
   for the nine transactions, read at the time in `read_at_utc.txt`.
+- `vesting_send.py` - the sender that sent this chain, byte for byte (below), copied here
+  when the programs changed.
+- `verify-format-2.json` - not written by the run: what the verifier writes today for the
+  same `chain.json`. The outputs of `verify.json`, in a format that also names the chain
+  file by its SHA-256.
 
 The two exceptions: in `build.log` (one line) and `verify.log` (two lines) the folder of the
 run on the computer that built it is cut from the paths of `chain.json` and `verify.json`;
@@ -178,12 +183,16 @@ the run's files were in when the sender wrote them.
 
 ## The programs
 
-The sender in [`testnet/`](../../README.md) is byte for byte the program that sent this
-chain: its SHA-256 is the record's `program_sha256`,
+[`vesting_send.py`](vesting_send.py) in this folder is byte for byte the program that sent
+this chain: its SHA-256 is the record's `program_sha256`,
 `afce3afbf5e596342d548820292d96dfafd7a08acb739813e926bb0a884a34f4`. The builder and the
-verifier in `tests/` are the programs that built and verified it, with two changes made
-after the run that touch neither: the builder's self-test writes into `target/tmp`, and the
-builder does not start while `VESTING_DUMP_DIR` is set. The harness the record names,
+verifier that built and verified it are `tests/testnet_chain.rs` and
+`tests/testnet_verify.rs` as they are at revision `2e22382` of this repository, with two
+changes made after the run that touch neither: the builder's self-test writes into
+`target/tmp`, and the builder does not start while `VESTING_DUMP_DIR` is set. The programs
+in [`testnet/`](../../README.md) and `tests/` have changed since that revision, after a
+review of them; the commit after it says what changed. None of it touches the contract or
+this record. `verify.json` is the report the run was sent with. The harness the record names,
 `kcc20_harness.py`, is not in this repository. How to check this record again:
 [testnet/README.md](../../README.md#checking-the-record-of-the-run).
 

@@ -342,9 +342,9 @@ node tools/mutation-run.mjs
 The workflow [`.github/workflows/checks.yml`](.github/workflows/checks.yml) runs the first
 block of commands on pushes to `main`, on pull requests and when started by hand, on
 machines hosted by GitHub: `ubuntu-24.04`, `macos-26` and `windows-2025`, in bash; on
-`ubuntu-24.04` it also runs the replay. On all three it runs the builder's self-test and
-the verifier on the chain file of the testnet run, and, in a job of its own, the tests of
-the sender, its check of that chain file and the checksums the record names. It does not
+`ubuntu-24.04` it also runs the replay. On all three it runs the self-tests of the builder
+and the verifier, both programs on the chain file of the testnet run, and, in a job of its
+own, the tests of the sender, its check of that chain file and the checksums the record names. It does not
 run the replay on Windows (see above) or on macOS (to keep the run short), nor the mutation
 run, nor anything that asks the network. A green mark beside a commit says
 that these commands passed on those machines for that commit; for a pull request they are
