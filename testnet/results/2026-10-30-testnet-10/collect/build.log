@@ -1,0 +1,20 @@
+build start 14:31:43
+   Compiling token-vesting v0.1.0 (the clone)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.10s
+  Executable tests\collect_coins.rs (target\debug\deps\collect_coins-e157b31b98bb2b0a.exe)
+build exit 0 at 14:31:50
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.66s
+     Running tests\collect_coins.rs (target\debug\deps\collect_coins-e157b31b98bb2b0a.exe)
+
+running 1 test
+fee 0: compute mass 17953, transient mass 51292, storage mass 0, fee mass 25646, floor Some(2564600), wanted 5129200
+fee 5129200: compute mass 17953, transient mass 51292, storage mass 0, fee mass 25646, floor Some(2564600), wanted 5129200
+input 0: accepted true, script units 185174, budget 18
+input 1: accepted true, script units 137037, budget 13
+input 2: accepted true, script units 137037, budget 13
+accepted by scripts, on submission and in a block at 610285814; id 659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c; fee 5129200 sompi; written
+test collect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.54s
+
+run exit 0 at 14:31:55

@@ -1,0 +1,64 @@
+{
+  "chain_file": "chain.json",
+  "chain_sha256": "98d02dfabc8014416ca9f2734f8db7a16de017afba6090e589879f6d5a6ee87e",
+  "started_utc": "2026-10-30T13:00:55Z",
+  "ended_utc": "2026-10-30T13:00:59Z",
+  "exit_code": 0,
+  "last_words": "finished: 5 found; 4 not sent, the chain is past it",
+  "moves": [
+    {
+      "name": "A1 vesting genesis",
+      "kind": "step",
+      "transaction_id": "64e26d025cf28a39f9fdd7596dd0c654791fe2b34f8df397aebf2cd2d37be473",
+      "outcome": "found"
+    },
+    {
+      "name": "A2 fund the vault",
+      "kind": "step",
+      "transaction_id": "8207361c0102a0b5fd097c24f292b1beaa3db6c4ef642c628f657d57abc7f11a",
+      "outcome": "found"
+    },
+    {
+      "name": "B1 before the cliff",
+      "kind": "probe",
+      "transaction_id": "9e44ee58ab48504bd6c7282e207aa384ed2632b8454b45383296439f23311597",
+      "outcome": "not sent, the chain is past it"
+    },
+    {
+      "name": "B2 dated at the end",
+      "kind": "probe",
+      "transaction_id": "71e093e85443bc1def7e7437087f15b6a9f1fff67933ca3f8b4b1577c23fb9f1",
+      "outcome": "not sent, the chain is past it"
+    },
+    {
+      "name": "B3 more than vested",
+      "kind": "probe",
+      "transaction_id": "48b8af496a6d4bb909ea87f157e97c10dd86d404111bb37b106502398dbafac2",
+      "outcome": "not sent, the chain is past it"
+    },
+    {
+      "name": "B4 to another key",
+      "kind": "probe",
+      "transaction_id": "f70087c0da3b17dc47ee5836e6221ca60f2b51e10618ff364bca5a474177551a",
+      "outcome": "not sent, the chain is past it"
+    },
+    {
+      "name": "R1 first release",
+      "kind": "step",
+      "transaction_id": "f5d86e8bb89b8b721b49961b60d90578280cf4d38ba8e92e46bedeaaf759b277",
+      "outcome": "found"
+    },
+    {
+      "name": "R2 second release",
+      "kind": "step",
+      "transaction_id": "741d60a7f6b416452befc44c4b5af1fcd84a6c5baf58831f48f76182084bc5ee",
+      "outcome": "found"
+    },
+    {
+      "name": "R3 the rest",
+      "kind": "step",
+      "transaction_id": "14858a52790e599127888378a2cb13ead451db84a30b0f3e51fa68d9e7b08b1e",
+      "outcome": "found"
+    }
+  ]
+}

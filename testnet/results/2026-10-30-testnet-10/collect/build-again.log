@@ -1,0 +1,4 @@
+# The program of this folder, copied to tests/, run again on 2026-10-30 with collect-request.json and the
+# beneficiary's key, after the transfer was on chain. Nothing was sent. Its last lines:
+accepted by scripts, on submission and in a block at 610285814; id 659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c; fee 5129200 sompi; written
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.56s

@@ -1,0 +1,12 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.95s
+     Running tests\testnet_chain.rs (target\debug\deps\testnet_chain-1ea733559cfadb1b.exe)
+  A1 vesting genesis: accepted at 610287001, id 64e26d025cf28a39f9fdd7596dd0c654791fe2b34f8df397aebf2cd2d37be473
+  A2 fund the vault: accepted at 610287001, id 8207361c0102a0b5fd097c24f292b1beaa3db6c4ef642c628f657d57abc7f11a
+  B1 before the cliff: refused at 610294021 as the file says (scripts input 0: failed to verify the signature script: Unsatisfied lock time: locktime requirement not satisfied -- locktime is greater than the transaction locktime: 610296001 > 610294001), id 9e44ee58ab48504bd6c7282e207aa384ed2632b8454b45383296439f23311597
+  B2 dated at the end: refused at 610294021 as the file says (consensus input 0: transaction input #0 is not finalized), id 71e093e85443bc1def7e7437087f15b6a9f1fff67933ca3f8b4b1577c23fb9f1
+  B3 more than vested: refused at 610296021 as the file says (scripts input 0: failed to verify the signature script: script ran, but verification failed), id 48b8af496a6d4bb909ea87f157e97c10dd86d404111bb37b106502398dbafac2
+  B4 to another key: refused at 610296021 as the file says (scripts input 0: failed to verify the signature script: script ran, but verification failed), id f70087c0da3b17dc47ee5836e6221ca60f2b51e10618ff364bca5a474177551a
+  R1 first release: accepted at 610296021, id f5d86e8bb89b8b721b49961b60d90578280cf4d38ba8e92e46bedeaaf759b277
+  R2 second release: accepted at 610299521, id 741d60a7f6b416452befc44c4b5af1fcd84a6c5baf58831f48f76182084bc5ee
+  R3 the rest: accepted at 610303021, id 14858a52790e599127888378a2cb13ead451db84a30b0f3e51fa68d9e7b08b1e
+chain.json: judged from its fields alone, 9 moves as the file says

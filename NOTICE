@@ -5,7 +5,7 @@ developers.
 It holds no file of the KCC20 reference and no file copied from its repository. Of the
 source text of the reference's contracts it quotes only what 1 lists: names, short
 fragments by which the checks name a place, and in the records of the runs the statements
-at which the token program stopped. The record of the testnet run carries the compiled
+at which the token program stopped. The records of the testnet runs carry the compiled
 script of one of its contracts, as 5 says. What in it comes from the work of others:
 
 1. What follows the KCC20 reference without being copied from it.
@@ -83,22 +83,29 @@ script of one of its contracts, as 5 says. What in it comes from the work of oth
    their own licenses. Every version is pinned by Cargo.lock and engine-2.1.0/Cargo.lock.
 
 5. The compiled script of the KCC20 contract inside the recorded transactions of the
-   testnet run.
+   testnet runs.
 
    A Kaspa transaction that spends a coin of a contract reveals the contract's script. Of
-   the 9 transactions kept in
+   the 9 transactions kept in each of
 
      testnet/results/2026-10-15-testnet-10/chain.json
+     testnet/results/2026-10-30-testnet-10/chain.json
 
    the 8 that spend a token coin (all but the first) therefore carry, in the signature
    script of that input, the compiled script of the contract KCC20 of the KCC20 reference
-   (see 1) whole: after the state fields of the coin, byte for byte the bytecode in that
-   repository's fixtures/public-mint/artifact.json, revision c8a0871. The 4 of them that
-   were accepted were accepted by Kaspa testnet-10 nodes on 2026-10-15 and were public
-   there; the explorer's answers for those 4 in the explorer/ folder of the same record
-   carry it too. The 4 refused transactions are kept beside them. No other file of this
-   repository carries it, and no script of the other two contracts of the reference is
-   carried.
+   (see 1) whole: after the state fields of the coin, byte for byte the rest of the bytecode in
+   that repository's fixtures/public-mint/artifact.json, revision c8a0871. The 4 of them in each
+   file that were accepted were accepted by Kaspa testnet-10 nodes on the day of that record
+   and were public there; the explorer's answers for those 4 in the explorer/ folder of the
+   same record carry it too. The 4 refused transactions are kept beside them. The one
+   transaction of
+
+     testnet/results/2026-10-30-testnet-10/collect/collect-tx.json
+
+   spends three token coins and carries it in each of its three inputs; it was accepted on
+   2026-10-30 and was public there, and the explorer's answer for it, explorer/C1.json in the
+   same record, carries it too. No other file of this repository carries it, and no script
+   of the other two contracts of the reference is carried.
 
    The reference states its license in its Cargo.toml (`license = "ISC"`, revision
    c8a0871) and carries no separate license file or copyright line, so no copyright line
@@ -126,5 +133,5 @@ script of one of its contracts, as 5 says. What in it comes from the work of oth
 Everything else was written for this study and is under the license in the file LICENSE:
 the contract, the crate token-vesting and its checks, the replay crate in engine-2.1.0/, the
 tools, the records of the runs in results/ (apart from what 1 says of them), and the
-programs of the testnet run, their description and its record in testnet/ (apart from
+programs of the testnet runs, their description and the records in testnet/ (apart from
 what 2 and 5 say of them).

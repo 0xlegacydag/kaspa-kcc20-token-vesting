@@ -1,0 +1,21 @@
+via     : wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh, node version 2.1.0
+DAA     : virtual DAA score 610303196; schedule start 610293001 (passed)
+window  : 'B2 dated at the end': PASSED: it will not be sent
+step  'A1 vesting genesis': on chain; 0 of 2 outputs unspent; due now
+step  'A2 fund the vault': on chain; 0 of 2 outputs unspent; due now
+probe 'B1 before the cliff': no trace; due now
+probe 'B2 dated at the end': no trace; due now
+probe 'B3 more than vested': no trace; due now
+probe 'B4 to another key': no trace; due now
+step  'R1 first release': on chain; 1 of 4 outputs unspent; due now
+step  'R2 second release': on chain; 1 of 4 outputs unspent; due now
+step  'R3 the rest': on chain; 2 of 2 outputs unspent; due now
+coins of the chain that are unspent now:
+  1.00000000 KAS  f5d86e8bb89b8b721b49961b60d90578280cf4d38ba8e92e46bedeaaf759b277:0  token KCC20 3 tokens of beneficiary
+  1.00000000 KAS  741d60a7f6b416452befc44c4b5af1fcd84a6c5baf58831f48f76182084bc5ee:0  token KCC20 3 tokens of beneficiary
+  1.00000000 KAS  14858a52790e599127888378a2cb13ead451db84a30b0f3e51fa68d9e7b08b1e:0  token KCC20 4 tokens of beneficiary
+  11.38823600 KAS  14858a52790e599127888378a2cb13ead451db84a30b0f3e51fa68d9e7b08b1e:1  change to 'payer'
+on chain: the first 5 of 5 steps are on chain ('A1 vesting genesis', 'A2 fund the vault', 'R1 first release', 'R2 second release', 'R3 the rest')
+balance: payer       958.73678916 KAS in 8 coin(s) at kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
+balance: alice       0.00000000 KAS in 0 coin(s) at kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
+balance: beneficiary 0.00000000 KAS in 0 coin(s) at kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf

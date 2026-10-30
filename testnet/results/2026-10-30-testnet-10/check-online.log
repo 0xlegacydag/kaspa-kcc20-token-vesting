@@ -1,0 +1,42 @@
+file    : chain.json, SHA-256 98d02dfabc8014416ca9f2734f8db7a16de017afba6090e589879f6d5a6ee87e
+check a  format, network, limits, launch checks, gates  : ok
+check b  the moves, lock times, windows, refusals       : ok
+check c  parties and their addresses                    : ok
+check d  transaction ids rebuilt by the SDK             : ok
+check e  linkage of the coins                           : ok
+check f  fees                                           : ok
+check g  outputs go to the contracts and the payer      : ok
+check h  vesting covenant id                            : ok - derived by the SDK from 'A1 vesting genesis', 1 output(s)
+check i  states, releases, tokens                       : ok
+check j  locks from states                              : ok - KCC20 recomputed for 14 coins, the template hash compared; the 6 TokenVesting locks are NOT recomputed by this program (check l)
+check l  TokenVesting locks, the verifier's report      : ok - the verifier's report (SHA-256 91f52cbcca38e15ad62e7203697779d3d391bd424559c2f3da9b23fad1a347bc) confirms the 6 TokenVesting locks; bound to this file by its SHA-256
+check k  summary
+  vesting id    : 0ed8c871b904bd14ae0912a8e0e2bb299ffc05f27d8e120190fa8f29cf3dc3ce
+  token id      : 0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a
+  funding coin  : 13.99179600 KAS of 'payer', 5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460:1
+  token coin    : 659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c:0, 10 tokens
+  schedule      : start 610293001, cliff +3000, duration 10000, total 10
+  moves         : 5 steps, 4 probes
+  fees          : 0.60356000 KAS over the steps, 0.67188200 KAS over the probes (cap of the file 8.00000000, feerate 200 sompi per gram)
+  left locked   : 3.00000000 KAS in covenant coins after the last step
+  left change   : 11.38823600 KAS to the payer
+  tokens        : beneficiary 10
+    step  A1 vesting genesis: lock time 0, sent above 0 [fee 0.08012000]
+    step  A2 fund the vault: lock time 0, sent above 0 [fee 0.06862000]
+    probe B1 before the cliff: lock time 610294001, sent above 610294021 [fee 0.20803800]; refused with 'Unsatisfied lock time'
+    probe B2 dated at the end: lock time 610303001, sent above 610294021, not at or after 610301001 [fee 0.04776800]; refused with 'is not finalized'
+    probe B3 more than vested: lock time 610296001, sent above 610296021 [fee 0.20803800]; refused with 'verification failed'
+    probe B4 to another key: lock time 610296001, sent above 610296021 [fee 0.20803800]; refused with 'verification failed'
+    step  R1 first release: lock time 610296001, sent above 610296021 [fee 0.20803800]
+    step  R2 second release: lock time 610299501, sent above 610299521 [fee 0.20524600]
+    step  R3 the rest: lock time 610303001, sent above 610303021 [fee 0.04153600]
+via     : wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh, node version 2.1.0
+estimate: priority bucket {'feerate': 100.0, 'estimatedSeconds': 0.0021713157887917017}
+estimate: normal buckets  [{'feerate': 100.0, 'estimatedSeconds': 0.0021713157887917017}, {'feerate': 100.0, 'estimatedSeconds': 0.0021713157887917017}]
+estimate: low buckets     [{'feerate': 100.0, 'estimatedSeconds': 0.0021713157887917017}]
+feerate : the file was built at 200 sompi per gram; the node's priority estimate now gives 100
+DAA     : virtual DAA score 610287437; schedule start 610293001 (5564 to go)
+window  : 'B2 dated at the end': open from above 610294021 to below 610301001, 13564 left
+on chain: the funding coin and the token coin are unspent, with the stated value, script and covenant id; no step is on chain
+built   : 'A1 vesting genesis' builds for sending from the node's own entries; not submitted
+check: passed (offline and online).

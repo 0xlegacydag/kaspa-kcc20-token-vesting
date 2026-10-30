@@ -12,7 +12,7 @@ the beneficiary may take a token coin of the contract whole, tokens beyond the s
 included. It comes with checks: almost every case is a whole transaction, judged by the
 script engine and the transaction rules of a Kaspa node, run offline.
 
-The contract passed the checks listed below, and one run on the Kaspa test network
+The contract passed the checks listed below, and two runs on the Kaspa test network
 testnet-10 with test coins ("On testnet-10" below); that is all this page claims. It is
 not safe or ready for anything but study.
 
@@ -255,7 +255,7 @@ The first release after the cliff, coins of 1 KAS, fee at the relay floor
 
 ## On testnet-10
 
-On 2026-10-15 the contract ran once on testnet-10, with test coins and throwaway keys: a
+On 2026-10-15 the contract ran on testnet-10, with test coins and throwaway keys: a
 vesting coin, a vault of 10 tokens of a test token made from the KCC20 reference, three
 releases (3 tokens at the cliff, 3 more halfway, the last 4 at the end of the schedule),
 and four moves that must be refused, sent between them. Nodes of version 2.1.0 accepted
@@ -270,15 +270,20 @@ the five honest moves exactly as they were built and signed offline, and refused
 
 The record, with every transaction, the nodes' answers word for word and links to a public
 explorer: [testnet/results/2026-10-15-testnet-10](testnet/results/2026-10-15-testnet-10/README.md).
-The programs that built, verified and sent the chain, and how to check the record again:
+
+On 2026-10-30 the same plan ran again with a new start of the same schedule, with the programs
+at revision `010a8a9`, changed after a review of them. The nodes accepted the five honest moves
+and refused the four forbidden ones, in the same words:
+[testnet/results/2026-10-30-testnet-10](testnet/results/2026-10-30-testnet-10/README.md).
+The programs that built, verified and sent the chains, and how to check the records again:
 [testnet/README.md](testnet/README.md).
 
 ## What this does not show
 
-- A live network beyond one run: one schedule, one fee rate, one day on testnet-10 (above);
+- A live network beyond two runs: the same plan of moves, one fee rate, on testnet-10 (above);
   the rules around the engine in the checks are a port of one revision.
 - The genesis of the vesting coin and of the token: no script checks them (see above); the
-  launch checks ran on one real genesis, that of the testnet run.
+  launch checks ran on two real ones, those of the testnet runs.
 - Revocation, several tranches, several beneficiaries: not built.
 - Any other token program: only the pinned KCC20 template, whose prefix and suffix lengths
   (1 and 3885 bytes) are constants of the contract.
@@ -328,7 +333,7 @@ with the Microsoft toolchain the replay crate does not build as published: the
 `kaspa-hashes` 2.1.0 package on crates.io lacks `keccakf1600_x86-64-msvc.asm`, which the
 rusty-kaspa repository has. The main suite takes rusty-kaspa from git and is not affected.
 
-The programs of the testnet run, their tests and the check of its record need Python 3.12
+The programs of the testnet runs, their tests and the check of the records need Python 3.12
 as well, with the pinned Kaspa SDK (`python -m pip install --require-hashes -r
 requirements.txt`): `testnet/README.md`, "Tests" and "Checking the record of the run".
 
@@ -343,8 +348,8 @@ The workflow [`.github/workflows/checks.yml`](.github/workflows/checks.yml) runs
 block of commands on pushes to `main`, on pull requests and when started by hand, on
 machines hosted by GitHub: `ubuntu-24.04`, `macos-26` and `windows-2025`, in bash; on
 `ubuntu-24.04` it also runs the replay. On all three it runs the self-tests of the builder
-and the verifier, both programs on the chain file of the testnet run, and, in a job of its
-own, the tests of the sender, its check of that chain file and the checksums the record names. It does not
+and the verifier, both programs on the chain files of the two testnet runs, and, in a job of its
+own, the tests of the sender, its check of those chain files and the checksums the records name. It does not
 run the replay on Windows (see above) or on macOS (to keep the run short), nor the mutation
 run, nor anything that asks the network. A green mark beside a commit says
 that these commands passed on those machines for that commit; for a pull request they are

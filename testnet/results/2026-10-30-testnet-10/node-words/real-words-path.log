@@ -1,0 +1,10 @@
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.214s
+
+OK
+the node's words: RPC Server (remote error) -> Rejected transaction ccd32944605dc84f6236a95fdc57a1d1108d8552e69180e9f1ef1ec26155d4ac: output (da5a7ffe0f388af7b4f56e2652aa2750784e46782df90a72abdef51ca4bde74e, 0) already spent by transaction 662165866188d658b52afaf6366e627982e5901a8eed3af48ede35649d74b35b in the mempool
+spender named   : 662165866188d658b52afaf6366e627982e5901a8eed3af48ede35649d74b35b (the first transaction: 662165866188d658b52afaf6366e627982e5901a8eed3af48ede35649d74b35b)
+stranger: exit 6 - line: STOP at probe 'B1 before the cliff': the node did not take it and names a transaction this file does not know, abababababababababababababababababababababababababababababababab, as the holder of a coin
+second run with that record: exit 0 (the probe was handed over again, no lasting block)
+this probe named: exit 5

@@ -1,0 +1,141 @@
+{
+  "chain_sha256": "98d02dfabc8014416ca9f2734f8db7a16de017afba6090e589879f6d5a6ee87e",
+  "format": "vesting-verify-report/2",
+  "mismatches": 0,
+  "outputs": [
+    {
+      "move": "A1 vesting genesis",
+      "ok": true,
+      "output": 0,
+      "role": "vesting",
+      "script_public_key": "aa20a5c8ccfb6c1f6333000c74a848c3981b61a00517e119818a858bc720fe3b2c7087"
+    },
+    {
+      "move": "A2 fund the vault",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa2046cd44f38747165f9efc90b88a5587cff62c8cf9b9d033fe28bf3a188f65d5f787"
+    },
+    {
+      "move": "B1 before the cliff",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa2084d6b8568257ad8fb861e541f64fb52a6d65bb3b07ba20617814267a1c9053f587"
+    },
+    {
+      "move": "B1 before the cliff",
+      "ok": true,
+      "output": 1,
+      "role": "token",
+      "script_public_key": "aa20d3a3960f1163ea6078ea60384ad4e2f206fd8acdcd6b3a981b7d65b4a3ddf4a987"
+    },
+    {
+      "move": "B1 before the cliff",
+      "ok": true,
+      "output": 2,
+      "role": "vesting",
+      "script_public_key": "aa20e3ed26c8cb5a44faf1d1ec09440a6ae85ab705f8c9ecbbebc91c6ce443f2ebca87"
+    },
+    {
+      "move": "B2 dated at the end",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa20514feecc95698cf828e753e1c37b3a073264fa39c00c316c83f965ecd00922dc87"
+    },
+    {
+      "move": "B3 more than vested",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa20f8cffe79bd03b6acf0b0a915bb0714135235daf5918139cebd5993b926b9d20787"
+    },
+    {
+      "move": "B3 more than vested",
+      "ok": true,
+      "output": 1,
+      "role": "token",
+      "script_public_key": "aa20171fb976bf5761f1a30fcf69828930982a53bf808e549861349455326b5625cd87"
+    },
+    {
+      "move": "B3 more than vested",
+      "ok": true,
+      "output": 2,
+      "role": "vesting",
+      "script_public_key": "aa206561bd1143efe7c6c8b777270e038737d2385383a317caa7112afbd8a59e787f87"
+    },
+    {
+      "move": "B4 to another key",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa201a3791234e22a3cafb27f0b80ec68f8c7b678c3327e19b2e81f3ca64f876607187"
+    },
+    {
+      "move": "B4 to another key",
+      "ok": true,
+      "output": 1,
+      "role": "token",
+      "script_public_key": "aa2089e9fb36cfa6d2c81bf3b1020b050667a0c0d731ff359a488598f83dc1ee387187"
+    },
+    {
+      "move": "B4 to another key",
+      "ok": true,
+      "output": 2,
+      "role": "vesting",
+      "script_public_key": "aa209b48d70564dda47e75c2bcab2472239c2552efc21098202d5295505bbae933ab87"
+    },
+    {
+      "move": "R1 first release",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa2065ab1bb51e00dd81b87a7dfb51e8bf8ba832732f71f4962730b32c028bcc7ef187"
+    },
+    {
+      "move": "R1 first release",
+      "ok": true,
+      "output": 1,
+      "role": "token",
+      "script_public_key": "aa2089e9fb36cfa6d2c81bf3b1020b050667a0c0d731ff359a488598f83dc1ee387187"
+    },
+    {
+      "move": "R1 first release",
+      "ok": true,
+      "output": 2,
+      "role": "vesting",
+      "script_public_key": "aa209b48d70564dda47e75c2bcab2472239c2552efc21098202d5295505bbae933ab87"
+    },
+    {
+      "move": "R2 second release",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa2065ab1bb51e00dd81b87a7dfb51e8bf8ba832732f71f4962730b32c028bcc7ef187"
+    },
+    {
+      "move": "R2 second release",
+      "ok": true,
+      "output": 1,
+      "role": "token",
+      "script_public_key": "aa20c970a9c77adb599968fc017f4a1bd5933f52002e619289621bfb033d147fea4c87"
+    },
+    {
+      "move": "R2 second release",
+      "ok": true,
+      "output": 2,
+      "role": "vesting",
+      "script_public_key": "aa20678adc2440751b9eb5abc3196752b24ae4e3ebf6af75a194644684fe3fdc5b3b87"
+    },
+    {
+      "move": "R3 the rest",
+      "ok": true,
+      "output": 0,
+      "role": "token",
+      "script_public_key": "aa20f8cffe79bd03b6acf0b0a915bb0714135235daf5918139cebd5993b926b9d20787"
+    }
+  ],
+  "vesting_covenant_id": "0ed8c871b904bd14ae0912a8e0e2bb299ffc05f27d8e120190fa8f29cf3dc3ce"
+}

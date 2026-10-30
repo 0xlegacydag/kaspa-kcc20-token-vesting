@@ -1,0 +1,9 @@
+via     : wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh, node version 2.1.0
+estimate: priority bucket {'feerate': 100.0, 'estimatedSeconds': 0.002131010079897544}
+estimate: normal buckets  [{'feerate': 100.0, 'estimatedSeconds': 0.002131010079897544}, {'feerate': 100.0, 'estimatedSeconds': 0.002131010079897544}]
+estimate: low buckets     [{'feerate': 100.0, 'estimatedSeconds': 0.002131010079897544}]
+feerate : 200 sompi per gram; the node's priority estimate is 100.0
+DAA     : virtual DAA score 610287001; schedule start 610293001 (lead 6000)
+funding : 13.99179600 KAS, 5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460:1
+token   : 659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c:0, 10 tokens, covenant id 0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a
+written : request.json

@@ -1,9 +1,11 @@
 # The testnet-10 run: builder, verifier, sender
 
 Three programs take the vesting contract of this repository to Kaspa **testnet-10**. Test
-network only. KAS on this page always means test KAS of testnet-10. The record of the one
-run made with them, on 2026-10-15, as they were then, with links to its transactions:
-[results/2026-10-15-testnet-10](results/2026-10-15-testnet-10/README.md).
+network only. KAS on this page always means test KAS of testnet-10. Two runs were made with
+them, each recorded with links to its transactions:
+[results/2026-10-15-testnet-10](results/2026-10-15-testnet-10/README.md), with the programs as
+they were then, and [results/2026-10-30-testnet-10](results/2026-10-30-testnet-10/README.md),
+with the programs on this page.
 
 - The **builder** (Rust, [`../tests/testnet_chain.rs`](../tests/testnet_chain.rs)) works
   offline. It holds the keys, builds and signs the nine moves of the run (two steps that
@@ -218,7 +220,8 @@ What a later `send` with the same `--record` folder does:
   Compute budgets and signatures are for the builder's judging and for a node to say.
 
 The sender here is not the program that sent the run of 2026-10-15: that one is kept byte
-for byte next to the record, as `results/2026-10-15-testnet-10/vesting_send.py`.
+for byte next to the record, as `results/2026-10-15-testnet-10/vesting_send.py`. The sender
+here is the program that sent the run of 2026-10-30.
 
 ## Tests
 
@@ -263,7 +266,7 @@ The verifier's self-test, from the root, with `KCC20_REFERENCE_DIR` set and
 cargo test --frozen --test testnet_verify
 ```
 
-The chain file of the run passes, and the same file changed in memory, one thing at a time,
+The chain file of the run of 2026-10-15 passes, and the same file changed in memory, one thing at a time,
 does not: its format, the template hash, the covenant ids, a party's key, the state of a
 vesting coin or a claim, the script of the change, a role, the outputs of a move. Its last
 line is `self-test: as intended`.
@@ -271,7 +274,7 @@ line is `self-test: as intended`.
 ## Checking the record of the run
 
 Offline, from the root of the repository (the first commands with `KCC20_REFERENCE_DIR`
-set). The verifier computes every lock of the chain file of the run again, and its report
+set). The verifier computes every lock of the chain file of the run of 2026-10-15 again, and its report
 must be `verify-format-2.json`, next to the record, byte for byte. That is `verify.json`,
 the report the run was sent with, in today's format: the same outputs, and the SHA-256 of
 the chain file. Then the builder judges the file from its fields alone:
@@ -302,6 +305,11 @@ The SHA-256 of `chain.json`, `verify.json` and `vesting_send.py` in
 `program_sha256` of the first line of the record in its `record/`. With the network, `status` on the same file and
 the same `--party` arguments shows what is on chain now.
 
-The workflow of this repository runs these commands, the sender's tests and the self-tests
-of the builder and the verifier on every push to `main`
+The record of 2026-10-30 is checked by the same commands with `results/2026-10-30-testnet-10/`
+and the same three addresses. It was sent with a report of today's format, so the verifier's
+report must be its `verify.json`, byte for byte, and the same file goes to `--verify-report`;
+the sender whose SHA-256 its record names is `testnet/vesting_send.py`.
+
+The workflow of this repository runs these commands on both records, the sender's tests and
+the self-tests of the builder and the verifier on every push to `main`
 ([README](../README.md#check-it-yourself)).

@@ -1,0 +1,30 @@
+vesting run on testnet-10: vesting-launch-chain/1, built offline, nothing sent
+request read at 2026-10-30T12:33:32Z from wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh (node 2.1.0), virtual DAA score 610287001
+schedule: start 610293001, cliff 3000, duration 10000, total 10; fee rate 200 sompi per gram; fee cap 8.00000000 KAS
+party payer        x-only key ca0e444ac258f8d1fab99d85d29713dfdc21ee24c4ac7a31c4ee47acac7b6b64
+party alice        x-only key 41787492bc8473d7411c706362a84cc2debaf38e19fbae262100b3c4bc89a622
+party beneficiary  x-only key 7d5ae1717b02c7e1d711a36a9eae06cc0d484d06b35ac3810cd26292a2efda22
+token covenant id 0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a; template hash 9703112ee6e3555107cd168858992b77d3b74f655205b2b463b1f9ec2ec73cf7
+vesting covenant id 0ed8c871b904bd14ae0912a8e0e2bb299ffc05f27d8e120190fa8f29cf3dc3ce
+launch checks: check_vesting_genesis ok, check_parameters ok, check_vault ok
+
+A1 vesting genesis     step  lock 0  send after 0  judged at 610287001  fee     8012000 sompi  floor 208300  storage 40060  fee mass 2083  compute 2083  transient 1412  accepted
+A2 fund the vault      step  lock 0  send after 0  judged at 610287001  fee     6862000 sompi  floor 924800  storage 34310  fee mass 9248  compute 7554  transient 18496  accepted
+B1 before the cliff    probe lock 610294001  send after 610294021  judged at 610294021  fee    20803800 sompi  floor 1402200  storage 104019  fee mass 14022  compute 12081  transient 28044  refused: scripts input 0: failed to verify the signature script: Unsatisfied lock time: locktime requirement not satisfied -- locktime is greater than the transaction locktime: 610296001 > 610294001
+B2 dated at the end    probe lock 610303001  send after 610294021  judged at 610294021  fee     4776800 sompi  floor 1346200  storage 23884  fee mass 13462  compute 10361  transient 26924  refused: consensus input 0: transaction input #0 is not finalized
+B3 more than vested    probe lock 610296001  send after 610296021  judged at 610296021  fee    20803800 sompi  floor 1402200  storage 104019  fee mass 14022  compute 12081  transient 28044  refused: scripts input 0: failed to verify the signature script: script ran, but verification failed
+B4 to another key      probe lock 610296001  send after 610296021  judged at 610296021  fee    20803800 sompi  floor 1402200  storage 104019  fee mass 14022  compute 12081  transient 28044  refused: scripts input 0: failed to verify the signature script: script ran, but verification failed
+R1 first release       step  lock 610296001  send after 610296021  judged at 610296021  fee    20803800 sompi  floor 1402200  storage 104019  fee mass 14022  compute 12081  transient 28044  accepted
+R2 second release      step  lock 610299501  send after 610299521  judged at 610299521  fee    20524600 sompi  floor 1402200  storage 102623  fee mass 14022  compute 12081  transient 28044  accepted
+R3 the rest            step  lock 610303001  send after 610303021  judged at 610303021  fee     4153600 sompi  floor 1346200  storage 20768  fee mass 13462  compute 10361  transient 26924  accepted
+
+fees of the steps 0.60356000 KAS, of the probes 0.67188200 KAS, in all 1.27544200 KAS; tokens to the beneficiary 10; KAS in the beneficiary's token coins at the end 3.00000000 KAS; change at the end 11.38823600 KAS
+A1 vesting genesis     64e26d025cf28a39f9fdd7596dd0c654791fe2b34f8df397aebf2cd2d37be473
+A2 fund the vault      8207361c0102a0b5fd097c24f292b1beaa3db6c4ef642c628f657d57abc7f11a
+B1 before the cliff    9e44ee58ab48504bd6c7282e207aa384ed2632b8454b45383296439f23311597
+B2 dated at the end    71e093e85443bc1def7e7437087f15b6a9f1fff67933ca3f8b4b1577c23fb9f1
+B3 more than vested    48b8af496a6d4bb909ea87f157e97c10dd86d404111bb37b106502398dbafac2
+B4 to another key      f70087c0da3b17dc47ee5836e6221ca60f2b51e10618ff364bca5a474177551a
+R1 first release       f5d86e8bb89b8b721b49961b60d90578280cf4d38ba8e92e46bedeaaf759b277
+R2 second release      741d60a7f6b416452befc44c4b5af1fcd84a6c5baf58831f48f76182084bc5ee
+R3 the rest            14858a52790e599127888378a2cb13ead451db84a30b0f3e51fa68d9e7b08b1e

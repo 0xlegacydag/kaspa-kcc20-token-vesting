@@ -15,9 +15,10 @@
 #
 # On Linux, macOS and Windows as well, the programs of the testnet-10 run (testnet/README.md):
 # the self-tests of the builder (made-up keys) and the verifier; the verifier on the chain
-# file of the run of 2026-10-15, whose report must be the one kept next to the record byte
-# for byte, and the builder's judging of that file; in a job of its own, the tests of the
-# sender, its check of that chain file, and the three checksums the record of the run names.
+# files of the runs of 2026-10-15 and 2026-10-30, whose reports must be the ones kept next to
+# the records byte for byte, and the builder's judging of those files; in a job of its own,
+# the tests of the sender, its check of those chain files, and the three checksums each record
+# names.
 #
 # Not run here: the mutation run of tools/mutation-run.mjs, which builds and runs the honest
 # and forbidden cases 31 times (the time of its last run: results/mutation-run.txt); the
@@ -100,22 +101,24 @@ jobs:
           export KCC20_REFERENCE_DIR
           cargo test --frozen --test testnet_verify
 
-      - name: "The record of the testnet run: every lock computed again, the same report"
+      - name: "The records of the testnet runs: every lock computed again, the same report"
         run: |
           KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
           export KCC20_REFERENCE_DIR
-          export VESTING_VERIFY_CHAIN=testnet/results/2026-10-15-testnet-10/chain.json
           export VESTING_VERIFY_REPORT=target/verify-of-the-run.json
-          rm -f "$VESTING_VERIFY_REPORT"
-          cargo test --frozen --test testnet_verify
-          cmp "$VESTING_VERIFY_REPORT" testnet/results/2026-10-15-testnet-10/verify-format-2.json
+          for report in 2026-10-15-testnet-10/verify-format-2.json 2026-10-30-testnet-10/verify.json; do
+            rm -f "$VESTING_VERIFY_REPORT"
+            VESTING_VERIFY_CHAIN="testnet/results/$(dirname "$report")/chain.json" cargo test --frozen --test testnet_verify
+            cmp "$VESTING_VERIFY_REPORT" "testnet/results/$report"
+          done
 
-      - name: "The record of the testnet run: every transaction judged again from the file"
+      - name: "The records of the testnet runs: every transaction judged again from the file"
         run: |
           KCC20_REFERENCE_DIR=$(realpath kcc20-reference)
           export KCC20_REFERENCE_DIR
-          export VESTING_JUDGE_CHAIN=testnet/results/2026-10-15-testnet-10/chain.json
-          cargo test --frozen --test testnet_chain
+          for run in 2026-10-15-testnet-10 2026-10-30-testnet-10; do
+            VESTING_JUDGE_CHAIN="testnet/results/$run/chain.json" cargo test --frozen --test testnet_chain
+          done
 
       - name: "The replay on 2.1.0: cargo fetch --locked"
         if: runner.os == 'Linux'
@@ -174,33 +177,40 @@ jobs:
         working-directory: testnet
         run: python -m unittest discover -s tests
 
-      - name: The chain file of the run, by the sender's rules
+      - name: The chain files of the runs, by the sender's rules
         working-directory: testnet
-        run: >
-          python vesting_send.py check results/2026-10-15-testnet-10/chain.json
-          --party payer=kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea
-          --party alice=kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw
-          --party beneficiary=kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf
-          --verify-report results/2026-10-15-testnet-10/verify-format-2.json
+        run: |
+          for report in 2026-10-15-testnet-10/verify-format-2.json 2026-10-30-testnet-10/verify.json; do
+            python vesting_send.py check "results/$(dirname "$report")/chain.json" \
+              --party payer=kaspatest:qr9qu3z2cfv03506hxwct55hz00acg0wynz2c733cnhy0t9v0d4kg8gzyrlea \
+              --party alice=kaspatest:qpqhsayjhjz8846pr3cxxc4gfnpdawhn3cvlht3xyyqt839u3xnzy3v7q4ckw \
+              --party beneficiary=kaspatest:qp744ct30vpv0cwhzx3k484wqmxq6jzdq6e44suppnfx9y4zaldzynqsn2asf \
+              --verify-report "results/$report"
+          done
 
-      - name: The three checksums the record of the run names
+      - name: The three checksums each record of a run names
         working-directory: testnet
         run: |
           python - <<'EOF'
           import glob, hashlib, json, sys
-          run = "results/2026-10-15-testnet-10"
-          (record,) = glob.glob(run + "/record/run-*Z.jsonl")
-          with open(record, encoding="utf-8") as lines:
-              first = json.loads(lines.readline())
           bad = 0
-          for want, name in (
-              (first["chain_sha256"], run + "/chain.json"),
-              (first["verify_report_sha256"], run + "/verify.json"),
-              (first["program_sha256"], run + "/vesting_send.py"),
+          # When testnet/vesting_send.py changes, first keep this copy next to the record, as for
+          # the run of 2026-10-15, and name it here.
+          for run, program in (
+              ("results/2026-10-15-testnet-10", "results/2026-10-15-testnet-10/vesting_send.py"),
+              ("results/2026-10-30-testnet-10", "vesting_send.py"),
           ):
-              with open(name, "rb") as file:
-                  have = hashlib.sha256(file.read()).hexdigest()
-              print(name, have, "ok" if have == want else "DIFFERENT, the record names " + want)
-              bad += have != want
+              (record,) = glob.glob(run + "/record/run-*Z.jsonl")
+              with open(record, encoding="utf-8") as lines:
+                  first = json.loads(lines.readline())
+              for want, name in (
+                  (first["chain_sha256"], run + "/chain.json"),
+                  (first["verify_report_sha256"], run + "/verify.json"),
+                  (first["program_sha256"], program),
+              ):
+                  with open(name, "rb") as file:
+                      have = hashlib.sha256(file.read()).hexdigest()
+                  print(name, have, "ok" if have == want else "DIFFERENT, the record names " + want)
+                  bad += have != want
           sys.exit(1 if bad else 0)
           EOF

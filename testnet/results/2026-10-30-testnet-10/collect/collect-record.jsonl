@@ -1,0 +1,3 @@
+{"at_utc": "2026-10-30T12:32:33Z", "event": "checked", "node": "wss://boson-10.kaspa.red/kaspa/testnet-10/wrpc/borsh", "server_version": "2.1.0", "score": 610286466, "transaction_id": "659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c", "fee": 5129200}
+{"at_utc": "2026-10-30T12:32:33Z", "event": "answer", "node": "wss://boson-10.kaspa.red/kaspa/testnet-10/wrpc/borsh", "accepted": true, "words": "659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c"}
+{"at_utc": "2026-10-30T12:32:35Z", "event": "seen", "node": "wss://boson-10.kaspa.red/kaspa/testnet-10/wrpc/borsh", "outpoint": "659ec3c0b6516d7aac76d1c178f4a9ec7f136576ee15c0db796de7f9c5f3de3c:0", "seconds": 1.1, "block_daa_score": 610286477}

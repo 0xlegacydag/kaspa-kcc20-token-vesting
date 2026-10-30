@@ -1,0 +1,35 @@
+{
+  "read_at_utc": "2026-10-30T12:31:16Z",
+  "node": "wss://vector-10.kaspa.green/kaspa/testnet-10/wrpc/borsh",
+  "virtual_daa_score": 610285814,
+  "covenant_id": "0d81e3e1d9f1c9568acd38e932f22eef1ea96dd6480d351e47cf61c692a4716a",
+  "beneficiary": "7d5ae1717b02c7e1d711a36a9eae06cc0d484d06b35ac3810cd26292a2efda22",
+  "alice": "41787492bc8473d7411c706362a84cc2debaf38e19fbae262100b3c4bc89a622",
+  "payer": "ca0e444ac258f8d1fab99d85d29713dfdc21ee24c4ac7a31c4ee47acac7b6b64",
+  "coins": [
+    {
+      "transaction_id": "786260db9405b405687d73f0fc6ca22c032a52ce8aebd8c09f5e9acb55997e3e",
+      "index": 0,
+      "amount": 3,
+      "value": 100000000,
+      "script_public_key": "aa2065ab1bb51e00dd81b87a7dfb51e8bf8ba832732f71f4962730b32c028bcc7ef187",
+      "block_daa_score": 597210472
+    },
+    {
+      "transaction_id": "3b5b025f4e6ee2e55fa56644ce2b47235df113a378033dbfd39b25ff97c9d8e0",
+      "index": 0,
+      "amount": 3,
+      "value": 100000000,
+      "script_public_key": "aa2065ab1bb51e00dd81b87a7dfb51e8bf8ba832732f71f4962730b32c028bcc7ef187",
+      "block_daa_score": 597213944
+    },
+    {
+      "transaction_id": "5ae7a4770144da75a497ae83e6d6e828b716eab42817f6cc79991995f2e78460",
+      "index": 0,
+      "amount": 4,
+      "value": 100000000,
+      "script_public_key": "aa20f8cffe79bd03b6acf0b0a915bb0714135235daf5918139cebd5993b926b9d20787",
+      "block_daa_score": 597217470
+    }
+  ]
+}
